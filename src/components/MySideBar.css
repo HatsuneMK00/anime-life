@@ -1,0 +1,28 @@
+.sidebar-container {
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #222529;
+    color: white;
+    position: sticky;
+    top: 3.5rem;
+    height: calc(100vh - 3.5rem);
+}
+
+.sidebar-row {
+    width: 100%;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+}
+
+.sidebar-row__selected {
+    background-color: #ffffff;
+    color: #222529;
+}
+
+.sidebar-button {
+    font-size: 1rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
