@@ -1,11 +1,11 @@
-import {Button, Col, Container, Row} from "react-bootstrap";
+import {Button, Col, Row} from "react-bootstrap";
 import './MySideBar.css';
 import SideBarItem from "./SideBarItem";
 import { GrAdd } from "react-icons/gr";
 
 function MySideBar() {
   return (
-    <Container fluid className="col-12 col-xl-2 col-md-3 d-flex flex-column ms-0 p-0 sidebar-container">
+    <div className="col-12 col-xl-2 col-md-3 d-flex flex-column ms-0 p-0 sidebar-container">
       <Row className="sidebar-row sidebar-row__selected">
         <Col>
           <SideBarItem sideBarText="非常一般" />
@@ -35,7 +35,7 @@ function MySideBar() {
           </Button>
         </Col>
       </Row>
-    </Container>
+    </div>
   )
 }
 
