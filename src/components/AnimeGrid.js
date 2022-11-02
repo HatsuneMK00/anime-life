@@ -1,5 +1,5 @@
 import {Col, Container, Row} from "react-bootstrap";
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import './AnimeGrid.css'
 
 function AnimeCard(props) {
@@ -22,87 +22,64 @@ function AnimeCard(props) {
 }
 
 function AnimeGrid() {
-  const animes = [
-    {
-      id: 1,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 2,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 3,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 4,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 5,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 6,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 7,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 8,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 9,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 10,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-    {
-      id: 11,
-      cover: "http://lain.bgm.tv/pic/cover/l/13/da/280516_TvEE7.jpg",
-      name: "昨日之歌",
-      name_jp: "イエスタデイをうたって",
-      rate: 3,
-    },
-  ]
 
-  const animeCards = animes.map((anime) => {
+  // todo 数据缓存到自己的服务器 已有数据的就不请求了
+
+  const [animeData, setAnimeData] = useState([]);
+
+  useEffect(() => {
+    const animeList = [
+      280516,
+      331535
+    ]
+    const animeListWithOrder = new Map();
+    animeList.forEach((id, index) => {
+      animeListWithOrder.set(id, index);
+    })
+
+    animeList.forEach((id) => {
+      fetch(`https://api.bgm.tv/v0/subjects/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          setAnimeData(prevAnimeData => {
+            const newAnimeData = [];
+            if (prevAnimeData.length === 0) {
+              const anime = {
+                id: data.id,
+                cover: data.images.large,
+                name: data.name_cn,
+                name_jp: data.name,
+                rate: 3
+              }
+              newAnimeData.push(anime)
+              return newAnimeData
+            }
+            let i = 0;
+            for (; i < prevAnimeData.length; i++) {
+              if (animeListWithOrder.get(prevAnimeData[i].id) < animeListWithOrder.get(data.id)) {
+                newAnimeData.push(prevAnimeData[i])
+              } else {
+                const anime = {
+                  id: data.id,
+                  cover: data.images.large,
+                  name: data.name_cn,
+                  name_jp: data.name,
+                  rate: 3
+                }
+                newAnimeData.push(anime)
+                break
+              }
+            }
+            for (; i < prevAnimeData.length; i++) {
+              newAnimeData.push(prevAnimeData[i])
+            }
+            return newAnimeData
+          });
+        })
+    })
+  }, []);
+
+  const animeCards = animeData.map((anime) => {
     return (
       <Col key={anime.id} className="pt-2 pb-2">
         <AnimeCard {...anime}/>

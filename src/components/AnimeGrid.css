@@ -30,6 +30,7 @@
 
 .anime-card__cover {
     height: 60%;
+    max-width: 90%;
     object-fit: cover;
     margin-top: auto;
     border-radius: 12px;
