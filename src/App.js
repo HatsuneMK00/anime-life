@@ -2,7 +2,7 @@ import './App.css';
 import MyNavBar from './components/MyNavBar';
 import MySideBar from './components/MySideBar';
 import {Container, Row} from "react-bootstrap";
-import AnimeCard from "./components/AnimeCard";
+import AnimeGrid from "./components/AnimeGrid";
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         <Container fluid className="main-container p-0">
           <Row className="flex-xl-nowrap h-100">
             <MySideBar/>
-            <AnimeCard/>
+            <AnimeGrid/>
           </Row>
         </Container>
     </div>

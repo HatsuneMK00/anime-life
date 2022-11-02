@@ -5,7 +5,7 @@ import { GrAdd } from "react-icons/gr";
 
 function MySideBar() {
   return (
-    <div className="col-12 col-xl-2 col-md-3 d-flex flex-column ms-0 p-0 sidebar-container">
+    <div className="col-4 col-xl-2 col-md-3 d-flex flex-column ms-0 p-0 sidebar-container">
       <Row className="sidebar-row sidebar-row__selected">
         <Col>
           <SideBarItem sideBarText="非常一般" />
