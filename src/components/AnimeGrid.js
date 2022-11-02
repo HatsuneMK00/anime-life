@@ -70,11 +70,24 @@ function AnimeGrid() {
                 break
               }
             }
+            if (i === prevAnimeData.length) {
+              const anime = {
+                id: data.id,
+                cover: data.images.large,
+                name: data.name_cn,
+                name_jp: data.name,
+                rate: 3
+              }
+              newAnimeData.push(anime)
+            }
             for (; i < prevAnimeData.length; i++) {
               newAnimeData.push(prevAnimeData[i])
             }
             return newAnimeData
           });
+        })
+        .catch(err => {
+          console.log(err)
         })
     })
   }, []);
