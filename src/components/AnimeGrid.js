@@ -45,7 +45,7 @@ function AnimeCard(props) {
   )
 }
 
-function AnimeGrid() {
+function AnimeGrid(props) {
 
   // todo 数据缓存到自己的服务器 已有数据的就不请求了
 
@@ -78,9 +78,9 @@ function AnimeGrid() {
 
   return (
     <Container className="col-8 col-xl-10 col-md-9 p-0 me-0 anime-grid-container">
-      <Container fluid>
+      <Container fluid className="pe-2">
         {/* 4 columns in a row on large screen, 3 columns in a row on a medium screen and 2 columns in a row on a small screen */}
-        <Row sm={2} md={3} lg={4} xs={1}>
+        <Row sm={2} md={3} lg={4} xs={1} className="pe-3">
           {animeCards}
         </Row>
       </Container>

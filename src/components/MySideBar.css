@@ -26,3 +26,7 @@
     align-items: center;
     justify-content: center;
 }
+
+.sidebar-item__content__badge {
+    margin-left: auto
+}
