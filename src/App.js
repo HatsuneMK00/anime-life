@@ -8,8 +8,6 @@ import {useState} from "react";
 function App() {
   const [chosenSideBarItem, setChosenSideBarItem] = useState(0);
 
-
-
   return (
     <div className="app-container">
       <MyNavBar/>

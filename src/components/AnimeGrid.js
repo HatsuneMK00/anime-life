@@ -1,4 +1,4 @@
-import {Col, Container, Row} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import React, {useState, useEffect} from 'react';
 import './AnimeGrid.css'
 import {BASE_URL} from "../global/network";
@@ -36,9 +36,12 @@ function AnimeCard(props) {
         <div className="anime-card__name-jp">
           {props.name_jp}
         </div>
-        <div>
-          {props.record_at.substring(0, props.record_at.indexOf('T'))}
-        </div>
+        {
+          props.record_at.substring(0, props.record_at.indexOf('T')) !== '0001-01-01' &&
+          <div>
+            {props.record_at.substring(0, props.record_at.indexOf('T'))}
+          </div>
+        }
         <RatingRow rating={props.rating}/>
       </div>
     </div>
@@ -52,21 +55,34 @@ function AnimeGrid(props) {
   const [animeData, setAnimeData] = useState([]);
 
   const userId = 2;
-  const offset = 0;
   useEffect(() => {
-    fetch(`${BASE_URL}/api/anime_record/${userId}?offset=${offset}`)
-      .then(res => res.json())
-      .then(data => {
-        data = data.data;
-        console.log(data);
-        setAnimeData(prevAnimeData => {
-          return [...prevAnimeData, ...data];
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      })
-  }, []);
+    if (props.rating === 0) {
+      fetch(`${BASE_URL}/api/anime_record/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          data = data.data;
+          setAnimeData(prevAnimeData => {
+            return [...data];
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    } else if (props.rating > 0 || props.rating === -1) {
+      fetch(`${BASE_URL}/api/anime_record/${userId}/rating/${props.rating}`)
+        .then(res => res.json())
+        .then(data => {
+          data = data.data;
+          setAnimeData(prevAnimeData => {
+            return [...data];
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    }
+
+  }, [props.rating]);
 
   const animeCards = animeData.map((anime) => {
     return (
@@ -76,6 +92,36 @@ function AnimeGrid(props) {
     )
   })
 
+  function handleLoadMoreClicked() {
+    // todo 全部加载完之后出现提示并且按钮不可点击也不再请求
+    const offset = animeData.length;
+    if (props.rating === 0) {
+      fetch(`${BASE_URL}/api/anime_record/${userId}?offset=${offset}`)
+        .then(res => res.json())
+        .then(data => {
+          data = data.data;
+          setAnimeData(prevAnimeData => {
+            return [...prevAnimeData, ...data];
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    } else if (props.rating > 0 || props.rating === -1) {
+      fetch(`${BASE_URL}/api/anime_record/${userId}/rating/${props.rating}?offset=${offset}`)
+        .then(res => res.json())
+        .then(data => {
+          data = data.data;
+          setAnimeData(prevAnimeData => {
+            return [...prevAnimeData, ...data];
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    }
+  }
+
   return (
     <Container className="col-8 col-xl-10 col-md-9 p-0 me-0 anime-grid-container">
       <Container fluid className="pe-2">
@@ -84,6 +130,7 @@ function AnimeGrid(props) {
           {animeCards}
         </Row>
       </Container>
+      <Button variant="outline-primary" className="button__load-more" onClick={handleLoadMoreClicked}>Load More...</Button>
     </Container>
   );
 }

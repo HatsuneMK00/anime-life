@@ -5,6 +5,7 @@
     top: 3.5rem;
     height: calc(100vh - 3.5rem);
     overflow-y: scroll;
+    align-items: center;
 }
 
 .anime-card__item {
@@ -63,4 +64,10 @@
 
 .anime-card__rating__star:not(:last-child) {
     margin-right: 0.2rem;
+}
+
+.button__load-more {
+    width: 40%;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }
