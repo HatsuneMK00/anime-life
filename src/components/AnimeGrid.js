@@ -7,21 +7,21 @@ import {MAX_RATING} from "../global/anime_record";
 
 function AnimeCard(props) {
   function RatingRow(props) {
-    const div_rating = []
+    const ratingDiv = []
     for (let i = 0; i < MAX_RATING; i++) {
       if (i < props.rating) {
-        div_rating.push(
+        ratingDiv.push(
           <BsStarFill className="anime-card__rating__star"/>
         )
       } else {
-        div_rating.push(
+        ratingDiv.push(
           <BsStar className="anime-card__rating__star"/>
         )
       }
     }
     return (
       <div className="anime-card__rating">
-        {div_rating}
+        {ratingDiv}
       </div>
     )
   }
@@ -51,10 +51,10 @@ function AnimeGrid() {
 
   const [animeData, setAnimeData] = useState([]);
 
-  const user_id = 2;
+  const userId = 2;
   const offset = 0;
   useEffect(() => {
-    fetch(`${BASE_URL}/api/anime_record/${user_id}?offset=${offset}`)
+    fetch(`${BASE_URL}/api/anime_record/${userId}?offset=${offset}`)
       .then(res => res.json())
       .then(data => {
         data = data.data;
