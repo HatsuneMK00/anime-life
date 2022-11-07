@@ -1,8 +1,31 @@
 import {Col, Container, Row} from "react-bootstrap";
 import React, {useState, useEffect} from 'react';
 import './AnimeGrid.css'
+import {BASE_URL} from "../global/network";
+import {BsStar, BsStarFill} from "react-icons/bs";
+import {MAX_RATING} from "../global/anime_record";
 
 function AnimeCard(props) {
+  function RatingRow(props) {
+    const div_rating = []
+    for (let i = 0; i < MAX_RATING; i++) {
+      if (i < props.rating) {
+        div_rating.push(
+          <BsStarFill className="anime-card__rating__star"/>
+        )
+      } else {
+        div_rating.push(
+          <BsStar className="anime-card__rating__star"/>
+        )
+      }
+    }
+    return (
+      <div className="anime-card__rating">
+        {div_rating}
+      </div>
+    )
+  }
+
   return (
     <div className="anime-card">
       <img src={props.cover} alt="Cover" className="anime-card__cover"/>
@@ -13,9 +36,10 @@ function AnimeCard(props) {
         <div className="anime-card__name-jp">
           {props.name_jp}
         </div>
-        <div className="anime-card__rate">
-          {props.rate}
+        <div>
+          {props.record_at.substring(0, props.record_at.indexOf('T'))}
         </div>
+        <RatingRow rating={props.rating}/>
       </div>
     </div>
   )
@@ -27,69 +51,21 @@ function AnimeGrid() {
 
   const [animeData, setAnimeData] = useState([]);
 
+  const user_id = 2;
+  const offset = 0;
   useEffect(() => {
-    const animeList = [
-      280516,
-      331535
-    ]
-    const animeListWithOrder = new Map();
-    animeList.forEach((id, index) => {
-      animeListWithOrder.set(id, index);
-    })
-
-    animeList.forEach((id) => {
-      fetch(`https://api.bgm.tv/v0/subjects/${id}`)
-        .then(res => res.json())
-        .then(data => {
-          setAnimeData(prevAnimeData => {
-            const newAnimeData = [];
-            if (prevAnimeData.length === 0) {
-              const anime = {
-                id: data.id,
-                cover: data.images.large,
-                name: data.name_cn,
-                name_jp: data.name,
-                rate: 3
-              }
-              newAnimeData.push(anime)
-              return newAnimeData
-            }
-            let i = 0;
-            for (; i < prevAnimeData.length; i++) {
-              if (animeListWithOrder.get(prevAnimeData[i].id) < animeListWithOrder.get(data.id)) {
-                newAnimeData.push(prevAnimeData[i])
-              } else {
-                const anime = {
-                  id: data.id,
-                  cover: data.images.large,
-                  name: data.name_cn,
-                  name_jp: data.name,
-                  rate: 3
-                }
-                newAnimeData.push(anime)
-                break
-              }
-            }
-            if (i === prevAnimeData.length) {
-              const anime = {
-                id: data.id,
-                cover: data.images.large,
-                name: data.name_cn,
-                name_jp: data.name,
-                rate: 3
-              }
-              newAnimeData.push(anime)
-            }
-            for (; i < prevAnimeData.length; i++) {
-              newAnimeData.push(prevAnimeData[i])
-            }
-            return newAnimeData
-          });
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    })
+    fetch(`${BASE_URL}/api/anime_record/${user_id}?offset=${offset}`)
+      .then(res => res.json())
+      .then(data => {
+        data = data.data;
+        console.log(data);
+        setAnimeData(prevAnimeData => {
+          return [...prevAnimeData, ...data];
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }, []);
 
   const animeCards = animeData.map((anime) => {
