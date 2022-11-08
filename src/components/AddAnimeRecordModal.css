@@ -1,0 +1,9 @@
+.add-anime-model-content {
+    background-color: #4f4f4f;
+    color: white;
+}
+
+.modal-content {
+    --bs-modal-color: white;
+    --bs-modal-bg: #4f4f4f;
+}

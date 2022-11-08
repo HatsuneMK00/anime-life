@@ -66,7 +66,7 @@ function MySideBar(props) {
       </Row>
       <Row className="mt-2 w-100">
         <Col className="pe-0 ms-2 me-2">
-          <Button variant="outline-primary" className="w-100">
+          <Button variant="outline-primary" className="w-100" onClick={() => props.showAddAnimeModel(true)}>
             <div className="sidebar-button">
               <GrAdd color="blue" className="me-2"/> 添加动画 <GrAdd color="blue" className="ms-2"/>
             </div>
