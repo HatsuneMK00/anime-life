@@ -1,12 +1,36 @@
 import {Button, Form, Modal} from "react-bootstrap";
 import './AddAnimeRecordModal.css'
 import {useState} from "react";
+import {sleep} from "../global/utils";
 
 function AddAnimeRecordModal(props) {
 
   function handleSubmitClicked() {
-    props.onHide()
-    console.log(formData)
+    const userId = 2;
+    setShowLoading(true);
+    const requestData = {
+      animeName: formData.animeName,
+      animeRating: parseInt(formData.animeRating),
+    }
+    fetch(`http://127.0.0.1:8080/api/anime_record/${userId}/addRecord`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)})
+      .then(res => res.json())
+      .then(data => {
+        setShowLoading(false);
+        props.onHide();
+        sleep(200).then(r => {
+          window.location.reload();
+        })
+      })
+      .catch(err => {
+        console.log(err);
+        setShowLoading(false);
+        props.onHide();
+      })
     setFormData({
       animeName: '',
       animeRating: -2,
@@ -17,6 +41,8 @@ function AddAnimeRecordModal(props) {
     animeName: '',
     animeRating: -2,
   });
+
+  const [showLoading, setShowLoading] = useState(false);
 
   function handleChange(e) {
     const {name, value} = e.target
@@ -71,7 +97,9 @@ function AddAnimeRecordModal(props) {
           </Form.Group>
 
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
-            <Button variant="outline-primary" className="w-50" onClick={() => handleSubmitClicked()}>提交</Button>
+            <Button variant="outline-primary" className="w-50" disabled={showLoading} onClick={() => handleSubmitClicked()}>
+              {showLoading ? '请稍等...' : '提交'}
+            </Button>
           </div>
         </Form>
       </Modal.Body>
