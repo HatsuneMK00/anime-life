@@ -59,6 +59,8 @@ function AnimeDetailModal(props) {
         console.log(err);
         setShowLoading(false);
         props.onHide();
+        // todo use a better way to show error message
+        alert("Fail to update the anime record");
       })
   }
 

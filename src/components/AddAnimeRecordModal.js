@@ -30,6 +30,8 @@ function AddAnimeRecordModal(props) {
         console.log(err);
         setShowLoading(false);
         props.onHide();
+        // todo use a better way to show error message
+        alert("Fail to add the anime record");
       })
     setFormData({
       animeName: '',
