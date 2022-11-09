@@ -195,6 +195,24 @@ function AnimeGrid(props) {
   });
 
   const userId = 2;
+
+  useEffect(() => {
+    if (props.searchText !== '') {
+      console.log('searching...')
+      fetch(`http://127.0.0.1:8080/api/anime_record/${userId}/search?searchText=${props.searchText}`)
+        .then(res => res.json())
+        .then(data => {
+          data = data.data
+          setAnimeData(prevAnimeData => {
+            return [...data];
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    }
+  }, [props.searchText])
+
   useEffect(() => {
     if (props.rating === 0) {
       fetch(`${BASE_URL}/api/anime_record/${userId}`)
@@ -235,7 +253,19 @@ function AnimeGrid(props) {
   function handleLoadMoreClicked() {
     // todo 全部加载完之后出现提示并且按钮不可点击也不再请求
     const offset = animeData.length;
-    if (props.rating === 0) {
+    if (props.searchText !== '') {
+      fetch(`http://127.0.0.1:8080/api/anime_record/${userId}/search?offset=${offset}&searchText=${props.searchText}`)
+        .then(res => res.json())
+        .then(data => {
+          data = data.data
+          setAnimeData(prevAnimeData => {
+            return [...prevAnimeData, ...data];
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    } else if (props.rating === 0) {
       fetch(`${BASE_URL}/api/anime_record/${userId}?offset=${offset}`)
         .then(res => res.json())
         .then(data => {

@@ -1,8 +1,13 @@
 import {Button, Container, Form, Nav, Navbar, NavDropdown} from "react-bootstrap";
-import React from "react";
+import React, {useState} from "react";
 import './MyNavBar.css';
 
-function MyNavBar() {
+function MyNavBar(props) {
+  function handleSearchClicked() {
+    props.setSearchText(searchText);
+  }
+  const [searchText, setSearchText] = useState('');
+
   return (
     <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
       <Container>
@@ -13,11 +18,13 @@ function MyNavBar() {
             <Form className="d-flex me-2">
               <Form.Control
                 type="search"
-                placeholder="Search"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="查找动画"
                 className="me-2"
                 aria-label="Search"
               />
-              <Button variant="outline-success">Search</Button>
+              <Button variant="outline-success" onClick={() => handleSearchClicked()}>Search</Button>
             </Form>
             <NavDropdown title="User" id="basic-nav-dropdown" className="">
               <NavDropdown.Item href="#action/3.1">Logout</NavDropdown.Item>

@@ -8,20 +8,24 @@ import AddAnimeRecordModal from "./components/AddAnimeRecordModal";
 
 function App() {
   const [chosenSideBarItem, setChosenSideBarItem] = useState(0);
-  const [addAnimeModelShow, setAddAnimeModelShow] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [addAnimeModalShow, setAddAnimeModalShow] = useState(false);
 
   return (
     <div className="app-container">
-      <MyNavBar/>
+      <MyNavBar setSearchText={setSearchText}/>
       <Container fluid className="main-container p-0">
         <Row className="flex-xl-nowrap h-100">
-          <MySideBar chosen={chosenSideBarItem} choose={setChosenSideBarItem} showAddAnimeModel={setAddAnimeModelShow}/>
-          <AnimeGrid rating={chosenSideBarItem}/>
+          <MySideBar chosen={chosenSideBarItem}
+                     choose={setChosenSideBarItem}
+                     showAddAnimeModal={setAddAnimeModalShow}
+                     setSearchText={setSearchText}/>
+          <AnimeGrid rating={chosenSideBarItem} searchText={searchText}/>
         </Row>
       </Container>
       <AddAnimeRecordModal
-        show={addAnimeModelShow}
-        onHide={() => setAddAnimeModelShow(false)}/>
+        show={addAnimeModalShow}
+        onHide={() => setAddAnimeModalShow(false)}/>
     </div>
   );
 }
