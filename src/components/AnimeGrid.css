@@ -78,3 +78,7 @@
     font-weight: bold;
     color: white !important;
 }
+
+.modal__edit-button:hover {
+    cursor: pointer;
+}

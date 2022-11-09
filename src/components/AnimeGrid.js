@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import './AnimeGrid.css'
 import {BASE_URL} from "../global/network";
 import {BsStar, BsStarFill} from "react-icons/bs";
+import {AiOutlineEdit} from "react-icons/ai";
 import {MAX_RATING} from "../global/anime_record";
 import {sleep} from "../global/utils";
 
@@ -15,6 +16,7 @@ function AnimeDetailModal(props) {
   // The form is based on the modal data, which is defined in the parent component.
 
   const [showLoading, setShowLoading] = useState(false);
+  const [isBangumiIdEditable, setIsBangumiIdEditable] = useState(false);
 
   function handleChange(e) {
     const {name, value} = e.target
@@ -37,7 +39,7 @@ function AnimeDetailModal(props) {
       bangumiId: typeof props.bangumiId === 'string' ? parseInt(props.bangumiId) : props.bangumiId,
       animeRating: parseInt(props.animeRating),
     }
-    console.log(requestData)
+    // console.log(requestData)
     fetch(`${BASE_URL}/api/anime_record/${userId}/updateRecord`, {
       method: 'POST',
       headers: {
@@ -49,9 +51,9 @@ function AnimeDetailModal(props) {
         setShowLoading(false);
         props.onHide();
         // todo only refresh the page when the update is successful and some data is changed
-        // sleep(500).then(r => {
-        //   window.location.reload();
-        // });
+        sleep(500).then(r => {
+          window.location.reload();
+        });
       })
       .catch(err => {
         console.log(err);
@@ -84,17 +86,21 @@ function AnimeDetailModal(props) {
 
           <Form.Group as={Row} className="mb-3" controlId="animeName">
             <Form.Label column sm="2">Bangumi ID</Form.Label>
-            <Col sm="10">
+            <Col sm="9">
               <Form.Control
                 value={props.bangumiId}
                 onChange={handleChange}
+                disabled={!isBangumiIdEditable}
                 name="bangumiId"/>
+            </Col>
+            <Col sm="1" className="d-flex flex-column align-items-center justify-content-center">
+              <AiOutlineEdit size="1.2em" onClick={() => setIsBangumiIdEditable(prevState => !prevState)} className="modal__edit-button" />
             </Col>
           </Form.Group>
 
           <Form.Group as={Row} className="mb-3" controlId="animeRating">
             <Form.Label column sm="2">评价</Form.Label>
-            <Col sm="10">
+            <Col sm="9">
               <Form.Select
                 value={props.animeRating}
                 onChange={handleChange}
