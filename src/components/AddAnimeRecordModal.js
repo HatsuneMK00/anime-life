@@ -22,7 +22,7 @@ function AddAnimeRecordModal(props) {
       .then(data => {
         setShowLoading(false);
         props.onHide();
-        sleep(200).then(r => {
+        sleep(500).then(r => {
           window.location.reload();
         })
       })
@@ -66,7 +66,7 @@ function AddAnimeRecordModal(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body
-        scrollable={true}>
+        scrollable="true">
         <Form>
           <Form.Group className="mb-3" controlId="animeName">
             <Form.Label>动画名称</Form.Label>
