@@ -1,0 +1,30 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #232529;
+    color: white;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form__title {
+    text-align: center;
+}
+
+.login-form__inner {
+    width: 40%;
+}
+
+.login-form__err-msg {
+    color: red;
+    text-align: center;
+    margin: 0 auto;
+}
