@@ -1,18 +1,18 @@
-import './App.css';
-import MyNavBar from './components/MyNavBar';
-import MySideBar from './components/MySideBar';
+import MyNavBar from "./components/MyNavBar";
 import {Container, Row} from "react-bootstrap";
+import MySideBar from "./components/MySideBar";
 import AnimeGrid from "./components/AnimeGrid";
-import {useState} from "react";
 import AddAnimeRecordModal from "./components/AddAnimeRecordModal";
+import {useState} from "react";
+import './AnimeRecord.css';
 
-function App() {
+function AnimeRecord() {
   const [chosenSideBarItem, setChosenSideBarItem] = useState(0);
   const [searchText, setSearchText] = useState('');
   const [addAnimeModalShow, setAddAnimeModalShow] = useState(false);
 
   return (
-    <div className="app-container">
+    <div className="overall-container">
       <MyNavBar setSearchText={setSearchText}/>
       <Container fluid className="main-container p-0">
         <Row className="flex-xl-nowrap h-100">
@@ -27,7 +27,7 @@ function App() {
         show={addAnimeModalShow}
         onHide={() => setAddAnimeModalShow(false)}/>
     </div>
-  );
+  )
 }
 
-export default App;
+export default AnimeRecord;
