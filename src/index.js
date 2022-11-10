@@ -5,11 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import Login from "./Login";
 import AnimeRecord from "./AnimeRecord";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to={"/login"} replace/>
+    element: <Navigate to={"/anime_record"} replace/>
   },
   {
     path: "/login",
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/anime_record",
-    element: <AnimeRecord />
+    element: <ProtectedRoute><AnimeRecord /></ProtectedRoute>
   }
 ]);
 

@@ -2,6 +2,7 @@ import {Button, Form, Modal} from "react-bootstrap";
 import './AddAnimeRecordModal.css'
 import {useState} from "react";
 import {sleep} from "../global/utils";
+import {BASE_URL, POST} from "../global/network";
 
 function AddAnimeRecordModal(props) {
 
@@ -12,13 +13,7 @@ function AddAnimeRecordModal(props) {
       animeName: formData.animeName,
       animeRating: parseInt(formData.animeRating),
     }
-    fetch(`http://127.0.0.1:8080/api/anime_record/${userId}/addRecord`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)})
-      .then(res => res.json())
+    POST(`${BASE_URL}/api/anime_record/${userId}/addRecord`, requestData)
       .then(data => {
         setShowLoading(false);
         props.onHide();

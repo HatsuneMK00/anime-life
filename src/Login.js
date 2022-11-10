@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
 import './Login.css'
 import {Button, Container, Form} from "react-bootstrap";
-import {BASE_URL} from "./global/network";
-import {redirect} from "react-router-dom";
+import {BASE_URL, POST} from "./global/network";
+import {useNavigate} from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showLoading, setShowLoading] = useState(false);
   const [showErrMsg, setShowErrMsg] = useState(false);
+  const navigate = useNavigate();
 
   function handleSubmitClicked() {
     setShowLoading(true);
@@ -18,20 +19,13 @@ function Login() {
       username: username,
       password: password,
     }
-    fetch(`${BASE_URL}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)})
-      .then(res => res.json())
+    POST(`${BASE_URL}/login`, requestData)
       .then(data => {
-        console.log(data);
         setShowLoading(false);
         if (data.code === 200) {
-          console.log(data.token);
           localStorage.setItem('token', data.token);
-          redirect('/anime_record');
+          navigate('/anime_record');
+          console.log('login success');
         } else if (data.code === 401) {
           setShowErrMsg(true);
         } else {

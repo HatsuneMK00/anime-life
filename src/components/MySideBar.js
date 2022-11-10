@@ -3,7 +3,7 @@ import './MySideBar.css';
 import SideBarItem from "./SideBarItem";
 import {GrAdd} from "react-icons/gr";
 import {useEffect, useState} from "react";
-import {BASE_URL} from "../global/network";
+import {BASE_URL, GET} from "../global/network";
 
 function MySideBar(props) {
   const userId = 2;
@@ -17,8 +17,7 @@ function MySideBar(props) {
   });
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/anime_record/${userId}/summary`)
-      .then(res => res.json())
+    GET(`${BASE_URL}/api/anime_record/${userId}/summary`)
       .then(data => {
         data = data.data;
         setSideBarData({

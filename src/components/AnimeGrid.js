@@ -1,7 +1,7 @@
 import {Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
 import React, {useState, useEffect} from 'react';
 import './AnimeGrid.css'
-import {BASE_URL} from "../global/network";
+import {BASE_URL, GET, POST} from "../global/network";
 import {BsStar, BsStarFill} from "react-icons/bs";
 import {AiOutlineEdit} from "react-icons/ai";
 import {MAX_RATING} from "../global/anime_record";
@@ -40,13 +40,7 @@ function AnimeDetailModal(props) {
       animeRating: parseInt(props.animeRating),
     }
     // console.log(requestData)
-    fetch(`${BASE_URL}/api/anime_record/${userId}/updateRecord`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)})
-      .then(res => res.json())
+    POST(`${BASE_URL}/api/anime_record/${userId}/updateRecord`, requestData)
       .then(data => {
         setShowLoading(false);
         props.onHide();
@@ -199,8 +193,7 @@ function AnimeGrid(props) {
   useEffect(() => {
     if (props.searchText !== '') {
       console.log('searching...')
-      fetch(`http://127.0.0.1:8080/api/anime_record/${userId}/search?searchText=${props.searchText}`)
-        .then(res => res.json())
+      GET(`${BASE_URL}/api/anime_record/${userId}/search?searchText=${props.searchText}`)
         .then(data => {
           data = data.data
           setAnimeData(prevAnimeData => {
@@ -215,8 +208,7 @@ function AnimeGrid(props) {
 
   useEffect(() => {
     if (props.rating === 0) {
-      fetch(`${BASE_URL}/api/anime_record/${userId}`)
-        .then(res => res.json())
+      GET(`${BASE_URL}/api/anime_record/${userId}`)
         .then(data => {
           data = data.data;
           setAnimeData(prevAnimeData => {
@@ -227,8 +219,7 @@ function AnimeGrid(props) {
           console.log(err);
         })
     } else if (props.rating > 0 || props.rating === -1) {
-      fetch(`${BASE_URL}/api/anime_record/${userId}/rating/${props.rating}`)
-        .then(res => res.json())
+      GET(`${BASE_URL}/api/anime_record/${userId}/rating/${props.rating}`)
         .then(data => {
           data = data.data;
           setAnimeData(prevAnimeData => {
@@ -254,8 +245,7 @@ function AnimeGrid(props) {
     // todo 全部加载完之后出现提示并且按钮不可点击也不再请求
     const offset = animeData.length;
     if (props.searchText !== '') {
-      fetch(`http://127.0.0.1:8080/api/anime_record/${userId}/search?offset=${offset}&searchText=${props.searchText}`)
-        .then(res => res.json())
+      GET(`${BASE_URL}/api/anime_record/${userId}/search?offset=${offset}&searchText=${props.searchText}`)
         .then(data => {
           data = data.data
           setAnimeData(prevAnimeData => {
@@ -266,8 +256,7 @@ function AnimeGrid(props) {
           console.log(err);
         })
     } else if (props.rating === 0) {
-      fetch(`${BASE_URL}/api/anime_record/${userId}?offset=${offset}`)
-        .then(res => res.json())
+      GET(`${BASE_URL}/api/anime_record/${userId}?offset=${offset}`)
         .then(data => {
           data = data.data;
           setAnimeData(prevAnimeData => {
@@ -278,8 +267,7 @@ function AnimeGrid(props) {
           console.log(err);
         })
     } else if (props.rating > 0 || props.rating === -1) {
-      fetch(`${BASE_URL}/api/anime_record/${userId}/rating/${props.rating}?offset=${offset}`)
-        .then(res => res.json())
+      GET(`${BASE_URL}/api/anime_record/${userId}/rating/${props.rating}?offset=${offset}`)
         .then(data => {
           data = data.data;
           setAnimeData(prevAnimeData => {
