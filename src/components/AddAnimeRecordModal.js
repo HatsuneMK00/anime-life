@@ -7,13 +7,12 @@ import {BASE_URL, POST} from "../global/network";
 function AddAnimeRecordModal(props) {
 
   function handleSubmitClicked() {
-    const userId = 2;
     setShowLoading(true);
     const requestData = {
       animeName: formData.animeName,
       animeRating: parseInt(formData.animeRating),
     }
-    POST(`${BASE_URL}/api/anime_record/${userId}/addRecord`, requestData)
+    POST(`${BASE_URL}/api/anime_record/addRecord`, requestData)
       .then(data => {
         setShowLoading(false);
         props.onHide();

@@ -30,7 +30,6 @@ function AnimeDetailModal(props) {
 
   // update the anime record
   function handleSubmitClicked() {
-    const userId = 2;
     setShowLoading(true);
 
     const requestData = {
@@ -40,7 +39,7 @@ function AnimeDetailModal(props) {
       animeRating: parseInt(props.animeRating),
     }
     // console.log(requestData)
-    POST(`${BASE_URL}/api/anime_record/${userId}/updateRecord`, requestData)
+    POST(`${BASE_URL}/api/anime_record/updateRecord`, requestData)
       .then(data => {
         setShowLoading(false);
         props.onHide();
@@ -188,12 +187,10 @@ function AnimeGrid(props) {
     animeRating: 0,
   });
 
-  const userId = 2;
-
   useEffect(() => {
     if (props.searchText !== '') {
       console.log('searching...')
-      GET(`${BASE_URL}/api/anime_record/${userId}/search?searchText=${props.searchText}`)
+      GET(`${BASE_URL}/api/anime_record/search?searchText=${props.searchText}`)
         .then(data => {
           data = data.data
           setAnimeData(prevAnimeData => {
@@ -208,7 +205,7 @@ function AnimeGrid(props) {
 
   useEffect(() => {
     if (props.rating === 0) {
-      GET(`${BASE_URL}/api/anime_record/${userId}`)
+      GET(`${BASE_URL}/api/anime_record`)
         .then(data => {
           data = data.data;
           setAnimeData(prevAnimeData => {
@@ -219,7 +216,7 @@ function AnimeGrid(props) {
           console.log(err);
         })
     } else if (props.rating > 0 || props.rating === -1) {
-      GET(`${BASE_URL}/api/anime_record/${userId}/rating/${props.rating}`)
+      GET(`${BASE_URL}/api/anime_record/rating/${props.rating}`)
         .then(data => {
           data = data.data;
           setAnimeData(prevAnimeData => {
@@ -245,7 +242,7 @@ function AnimeGrid(props) {
     // todo 全部加载完之后出现提示并且按钮不可点击也不再请求
     const offset = animeData.length;
     if (props.searchText !== '') {
-      GET(`${BASE_URL}/api/anime_record/${userId}/search?offset=${offset}&searchText=${props.searchText}`)
+      GET(`${BASE_URL}/api/anime_record/search?offset=${offset}&searchText=${props.searchText}`)
         .then(data => {
           data = data.data
           setAnimeData(prevAnimeData => {
@@ -256,7 +253,7 @@ function AnimeGrid(props) {
           console.log(err);
         })
     } else if (props.rating === 0) {
-      GET(`${BASE_URL}/api/anime_record/${userId}?offset=${offset}`)
+      GET(`${BASE_URL}/api/anime_record?offset=${offset}/`)
         .then(data => {
           data = data.data;
           setAnimeData(prevAnimeData => {
@@ -267,7 +264,7 @@ function AnimeGrid(props) {
           console.log(err);
         })
     } else if (props.rating > 0 || props.rating === -1) {
-      GET(`${BASE_URL}/api/anime_record/${userId}/rating/${props.rating}?offset=${offset}`)
+      GET(`${BASE_URL}/api/anime_record/rating/${props.rating}?offset=${offset}`)
         .then(data => {
           data = data.data;
           setAnimeData(prevAnimeData => {

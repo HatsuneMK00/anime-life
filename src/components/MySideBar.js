@@ -6,8 +6,6 @@ import {useEffect, useState} from "react";
 import {BASE_URL, GET} from "../global/network";
 
 function MySideBar(props) {
-  const userId = 2;
-
   const [sideBarData, setSideBarData] = useState({
     all: 0,
     ratingOne: 0,
@@ -17,7 +15,7 @@ function MySideBar(props) {
   });
 
   useEffect(() => {
-    GET(`${BASE_URL}/api/anime_record/${userId}/summary`)
+    GET(`${BASE_URL}/api/anime_record/summary`)
       .then(data => {
         data = data.data;
         setSideBarData({
