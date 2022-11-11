@@ -253,7 +253,7 @@ function AnimeGrid(props) {
           console.log(err);
         })
     } else if (props.rating === 0) {
-      GET(`${BASE_URL}/api/anime_record?offset=${offset}/`)
+      GET(`${BASE_URL}/api/anime_record?offset=${offset}`)
         .then(data => {
           data = data.data;
           setAnimeData(prevAnimeData => {
