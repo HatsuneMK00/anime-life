@@ -155,11 +155,11 @@ function AnimeCard(props) {
     for (let i = 0; i < MAX_RATING; i++) {
       if (i < props.rating) {
         ratingDiv.push(
-          <BsStarFill className="anime-card__rating__star"/>
+          <BsStarFill key={i} className="anime-card__rating__star"/>
         )
       } else {
         ratingDiv.push(
-          <BsStar className="anime-card__rating__star"/>
+          <BsStar key={i} className="anime-card__rating__star"/>
         )
       }
     }
@@ -310,7 +310,7 @@ function AnimeGrid(props) {
       <Container className="col-8 col-xl-10 col-md-9 p-0 me-0 anime-grid-container">
         <Container fluid className="pe-2">
           {/* 4 columns in a row on large screen, 3 columns in a row on a medium screen and 2 columns in a row on a small screen */}
-          <Row sm={2} md={3} lg={4} xs={1} className="pe-3">
+          <Row sm={2} md={3} lg={4} xs={1} xl={5} xxl={5} className="pe-3">
             {animeCards}
           </Row>
         </Container>
