@@ -16,6 +16,7 @@ function AnimeDetailModal(props) {
   // The form is based on the modal data, which is defined in the parent component.
 
   const [showLoading, setShowLoading] = useState(false);
+  const [showDeleteLoading, setShowDeleteLoading] = useState(false);
   const [isBangumiIdEditable, setIsBangumiIdEditable] = useState(false);
 
   function handleChange(e) {
@@ -54,6 +55,27 @@ function AnimeDetailModal(props) {
         props.onHide();
         // todo use a better way to show error message
         alert("Fail to update the anime record");
+      })
+  }
+
+  function handleDeleteClicked() {
+    setShowDeleteLoading(true);
+    const requestData = {
+      animeId: props.animeId,
+    }
+    POST(`${BASE_URL}/api/anime_record/deleteRecord`, requestData)
+      .then(data => {
+        setShowDeleteLoading(false);
+        props.onHide();
+        sleep(500).then(r => {
+          window.location.reload();
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        setShowDeleteLoading(false);
+        props.onHide();
+        alert("Fail to delete the anime record");
       })
   }
 
@@ -113,6 +135,12 @@ function AnimeDetailModal(props) {
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
             <Button variant="outline-primary" className="w-50" disabled={showLoading} onClick={() => handleSubmitClicked()}>
               {showLoading ? '请稍等...' : '更新'}
+            </Button>
+          </div>
+
+          <div className="m-auto pt-3 align-items-center d-flex flex-column">
+            <Button variant="outline-danger" className="w-50" disabled={showDeleteLoading} onClick={() => handleDeleteClicked()}>
+              {showDeleteLoading ? '正在删除' : '删除该记录'}
             </Button>
           </div>
         </Form>
