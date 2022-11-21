@@ -3,13 +3,31 @@ import {Container, Row} from "react-bootstrap";
 import MySideBar from "./components/MySideBar";
 import AnimeGrid from "./components/AnimeGrid";
 import AddAnimeRecordModal from "./components/AddAnimeRecordModal";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import './AnimeRecord.css';
+import {BASE_URL_WS} from "./global/network";
+
+const socket = new WebSocket(BASE_URL_WS);
 
 function AnimeRecord() {
   const [chosenSideBarItem, setChosenSideBarItem] = useState(0);
   const [searchText, setSearchText] = useState('');
   const [addAnimeModalShow, setAddAnimeModalShow] = useState(false);
+
+  useEffect(() => {
+    socket.onopen = () => {
+      console.log('connected');
+    };
+
+    socket.onmessage = (e) => {
+      console.log(e.data);
+    };
+
+    return () => {
+      console.log('disconnected');
+      socket.close();
+    }
+  }, [])
 
   return (
     <div className="overall-container">

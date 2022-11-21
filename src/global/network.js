@@ -1,7 +1,11 @@
 
 
-export const BASE_URL = 'http://127.0.0.1:8080';
-export const BASE_URL_DEBUG = 'http://127.0.0.1:8080';
+const BASE_URL_DEBUG = 'http://127.0.0.1:8080';
+const BASE_URL_PROD = 'http://119.23.188.171:8080';
+const BASE_URL_WS_DEBUG = 'ws://127.0.0.1:8080/ws';
+const BASE_URL_WS_PROD = 'ws://119.23.188.171:8080/ws';
+export const BASE_URL = BASE_URL_DEBUG;
+export const BASE_URL_WS = BASE_URL_WS_DEBUG;
 
 export function GET(url) {
   return fetch(url, {
