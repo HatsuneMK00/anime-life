@@ -5,7 +5,8 @@ import {BASE_URL, GET, POST} from "../global/network";
 import {BsStar, BsStarFill} from "react-icons/bs";
 import {AiOutlineEdit} from "react-icons/ai";
 import {MAX_RATING} from "../global/anime_record";
-import {sleep} from "../global/utils";
+import {setRecordState, appendToTrailingMulti, deleteById, updateById} from "../store/animeRecordDataSlice";
+import {useDispatch, useSelector} from "react-redux";
 
 
 /*
@@ -18,6 +19,8 @@ function AnimeDetailModal(props) {
   const [showLoading, setShowLoading] = useState(false);
   const [showDeleteLoading, setShowDeleteLoading] = useState(false);
   const [isBangumiIdEditable, setIsBangumiIdEditable] = useState(false);
+
+  const dispatch = useDispatch();
 
   function handleChange(e) {
     const {name, value} = e.target
@@ -44,10 +47,19 @@ function AnimeDetailModal(props) {
       .then(data => {
         setShowLoading(false);
         props.onHide();
-        // todo only refresh the page when the update is successful and some data is changed
-        sleep(500).then(r => {
-          window.location.reload();
-        });
+        const anime = data.data.updated_anime
+        const record = data.data.record
+        const animeRecord = {
+          id: record.anime_id,
+          record_at: record.created_at,
+          rating: record.rating,
+          comment: record.comment,
+          bangumi_id: anime.bangumi_id,
+          name: anime.name,
+          name_jp: anime.name_jp,
+          cover: anime.cover,
+        }
+        dispatch(updateById(animeRecord));
       })
       .catch(err => {
         console.log(err);
@@ -67,9 +79,7 @@ function AnimeDetailModal(props) {
       .then(data => {
         setShowDeleteLoading(false);
         props.onHide();
-        sleep(500).then(r => {
-          window.location.reload();
-        });
+        dispatch(deleteById(props.animeId));
       })
       .catch(err => {
         console.log(err);
@@ -206,7 +216,7 @@ function AnimeGrid(props) {
 
   // todo 数据缓存到自己的服务器 已有数据的就不请求了
 
-  const [animeData, setAnimeData] = useState([]);
+  // const [animeData, setAnimeData] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [modalData, setModalData] = useState({
     animeId: 0,
@@ -214,16 +224,16 @@ function AnimeGrid(props) {
     bangumiId: -1,
     animeRating: 0,
   });
+  const animeRecordData = useSelector((state) => state.animeRecordData.value);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    // FIXME This useEffect collaborates with the modification of searchText in Navbar
     if (props.searchText !== '') {
-      console.log('searching...')
       GET(`${BASE_URL}/api/anime_record/search?searchText=${props.searchText}`)
         .then(data => {
           data = data.data
-          setAnimeData(prevAnimeData => {
-            return [...data];
-          });
+          dispatch(setRecordState(data))
         })
         .catch(err => {
           console.log(err);
@@ -236,9 +246,7 @@ function AnimeGrid(props) {
       GET(`${BASE_URL}/api/anime_record`)
         .then(data => {
           data = data.data;
-          setAnimeData(prevAnimeData => {
-            return [...data];
-          });
+          dispatch(setRecordState(data));
         })
         .catch(err => {
           console.log(err);
@@ -247,9 +255,7 @@ function AnimeGrid(props) {
       GET(`${BASE_URL}/api/anime_record/rating/${props.rating}`)
         .then(data => {
           data = data.data;
-          setAnimeData(prevAnimeData => {
-            return [...data];
-          });
+          dispatch(setRecordState(data));
         })
         .catch(err => {
           console.log(err);
@@ -258,7 +264,7 @@ function AnimeGrid(props) {
 
   }, [props.rating]);
 
-  const animeCards = animeData.map((anime) => {
+  const animeCards = animeRecordData.map((anime) => {
     return (
       <Col key={anime.id} className="pt-2 pb-2">
         <AnimeCard {...anime} setAnimeDetail={setModalData} showAnimeDetailModal={setModalShow}/>
@@ -268,14 +274,12 @@ function AnimeGrid(props) {
 
   function handleLoadMoreClicked() {
     // todo 全部加载完之后出现提示并且按钮不可点击也不再请求
-    const offset = animeData.length;
+    const offset = animeRecordData.length;
     if (props.searchText !== '') {
       GET(`${BASE_URL}/api/anime_record/search?offset=${offset}&searchText=${props.searchText}`)
         .then(data => {
-          data = data.data
-          setAnimeData(prevAnimeData => {
-            return [...prevAnimeData, ...data];
-          });
+          data = data.data;
+          dispatch(appendToTrailingMulti(data));
         })
         .catch(err => {
           console.log(err);
@@ -284,9 +288,7 @@ function AnimeGrid(props) {
       GET(`${BASE_URL}/api/anime_record?offset=${offset}`)
         .then(data => {
           data = data.data;
-          setAnimeData(prevAnimeData => {
-            return [...prevAnimeData, ...data];
-          });
+          dispatch(appendToTrailingMulti(data));
         })
         .catch(err => {
           console.log(err);
@@ -295,9 +297,7 @@ function AnimeGrid(props) {
       GET(`${BASE_URL}/api/anime_record/rating/${props.rating}?offset=${offset}`)
         .then(data => {
           data = data.data;
-          setAnimeData(prevAnimeData => {
-            return [...prevAnimeData, ...data];
-          });
+          dispatch(appendToTrailingMulti(data));
         })
         .catch(err => {
           console.log(err);

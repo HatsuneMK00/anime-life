@@ -58,7 +58,7 @@ function AnimeRecord() {
       <AddAnimeRecordModal
         show={addAnimeModalShow}
         onHide={() => setAddAnimeModalShow(false)}
-        loadingMsg={loadingMsgOfAddAnime}/>
+        loadingmsg={loadingMsgOfAddAnime}/>
     </div>
   )
 }

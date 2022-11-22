@@ -3,8 +3,12 @@ import './AddAnimeRecordModal.css'
 import {useState} from "react";
 import {sleep} from "../global/utils";
 import {BASE_URL, POST} from "../global/network";
+import {useDispatch} from "react-redux";
+import {appendToLeading} from "../store/animeRecordDataSlice";
 
 function AddAnimeRecordModal(props) {
+
+  const dispatch = useDispatch();
 
   function handleSubmitClicked() {
     setShowLoading(true);
@@ -16,9 +20,22 @@ function AddAnimeRecordModal(props) {
       .then(data => {
         setShowLoading(false);
         props.onHide();
-        sleep(500).then(r => {
-          window.location.reload();
-        })
+        console.log(data);
+        const anime = data.data.anime
+        const record = data.data.record
+        const animeRecord = {
+          id: record.anime_id,
+          record_at: record.created_at,
+          rating: record.rating,
+          comment: record.comment,
+          bangumi_id: anime.bangumi_id,
+          cover: anime.cover,
+          name: anime.name,
+          name_jp: anime.name_jp
+        }
+        dispatch(appendToLeading(animeRecord));
+        // This log doesn't show the latest state of animeRecordData
+        // console.log(animeRecordData);
       })
       .catch(err => {
         console.log(err);
@@ -96,7 +113,7 @@ function AddAnimeRecordModal(props) {
 
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
             <Button variant="outline-primary" className="w-50" disabled={showLoading} onClick={() => handleSubmitClicked()}>
-              {showLoading ? props.loadingMsg : '提交'}
+              {showLoading ? props.loadingmsg : '提交'}
             </Button>
           </div>
         </Form>
