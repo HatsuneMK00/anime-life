@@ -27,10 +27,12 @@ function AddAnimeRecordModal(props) {
         // todo use a better way to show error message
         alert("Fail to add the anime record");
       })
-    setFormData({
-      animeName: '',
-      animeRating: -2,
-    })
+      .finally(() => {
+        setFormData({
+          animeName: '',
+          animeRating: -2,
+        })
+      })
   }
 
   const [formData, setFormData] = useState({
@@ -94,7 +96,7 @@ function AddAnimeRecordModal(props) {
 
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
             <Button variant="outline-primary" className="w-50" disabled={showLoading} onClick={() => handleSubmitClicked()}>
-              {showLoading ? '请稍等...' : '提交'}
+              {showLoading ? props.loadingMsg : '提交'}
             </Button>
           </div>
         </Form>

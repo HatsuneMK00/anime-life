@@ -14,12 +14,26 @@ function AnimeRecord() {
   const [searchText, setSearchText] = useState('');
   const [addAnimeModalShow, setAddAnimeModalShow] = useState(false);
 
+  // state for info controlled by websocket
+  // TODO use redux to manage state? should have better implementation
+  const [loadingMsgOfAddAnime, setLoadingMsgOfAddAnime] = useState('请稍等...');
+
   useEffect(() => {
     socket.onopen = () => {
       console.log('connected');
     };
 
     socket.onmessage = (e) => {
+      const msg = JSON.parse(e.data);
+      if (msg.type === 'message') {
+      //  if msg data contains 'fetching', set loadingMsgOfAddAnime to 正在获取动画元数据...
+      //  if msg data contains 'fetched', set loadingMsgOfAddAnime to 正在添加动画记录...
+        if (msg.data.includes('fetching')) {
+          setLoadingMsgOfAddAnime('正在获取动画元数据...');
+        } else if (msg.data.includes('fetched')) {
+          setLoadingMsgOfAddAnime('正在添加动画记录...');
+        }
+      }
       console.log(e.data);
     };
 
@@ -43,7 +57,8 @@ function AnimeRecord() {
       </Container>
       <AddAnimeRecordModal
         show={addAnimeModalShow}
-        onHide={() => setAddAnimeModalShow(false)}/>
+        onHide={() => setAddAnimeModalShow(false)}
+        loadingMsg={loadingMsgOfAddAnime}/>
     </div>
   )
 }
