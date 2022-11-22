@@ -6,6 +6,7 @@ import {useEffect} from "react";
 import {BASE_URL, GET} from "../global/network";
 import {useDispatch, useSelector} from "react-redux";
 import {setSummaryState} from "../store/animeRecordSummarySlice";
+import {setSearchText} from "../store/searchTextSlice";
 
 function MySideBar(props) {
   const sideBarData = useSelector(state => state.animeRecordSummary.value);
@@ -28,7 +29,7 @@ function MySideBar(props) {
 
   function handleSideBarItemClicked(index) {
     props.choose(index);
-    props.setSearchText('');
+    dispatch(setSearchText(''));
   }
 
   return (

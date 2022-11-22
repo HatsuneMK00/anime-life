@@ -11,7 +11,6 @@ const socket = new WebSocket(BASE_URL_WS);
 
 function AnimeRecord() {
   const [chosenSideBarItem, setChosenSideBarItem] = useState(0);
-  const [searchText, setSearchText] = useState('');
   const [addAnimeModalShow, setAddAnimeModalShow] = useState(false);
 
   // state for info controlled by websocket
@@ -45,14 +44,13 @@ function AnimeRecord() {
 
   return (
     <div className="overall-container">
-      <MyNavBar setSearchText={setSearchText}/>
+      <MyNavBar setChosenSideBarItem={setChosenSideBarItem} />
       <Container fluid className="main-container p-0">
         <Row className="flex-xl-nowrap h-100">
           <MySideBar chosen={chosenSideBarItem}
                      choose={setChosenSideBarItem}
-                     showAddAnimeModal={setAddAnimeModalShow}
-                     setSearchText={setSearchText}/>
-          <AnimeGrid rating={chosenSideBarItem} searchText={searchText}/>
+                     showAddAnimeModal={setAddAnimeModalShow}/>
+          <AnimeGrid rating={chosenSideBarItem}/>
         </Row>
       </Container>
       <AddAnimeRecordModal

@@ -226,21 +226,8 @@ function AnimeGrid(props) {
     animeRating: 0,
   });
   const animeRecordData = useSelector((state) => state.animeRecordData.value);
+  const searchText = useSelector((state) => state.searchText.value);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    // FIXME This useEffect collaborates with the modification of searchText in Navbar
-    if (props.searchText !== '') {
-      GET(`${BASE_URL}/api/anime_record/search?searchText=${props.searchText}`)
-        .then(data => {
-          data = data.data
-          dispatch(setRecordState(data))
-        })
-        .catch(err => {
-          console.log(err);
-        })
-    }
-  }, [props.searchText])
 
   useEffect(() => {
     if (props.rating === 0) {
@@ -276,8 +263,8 @@ function AnimeGrid(props) {
   function handleLoadMoreClicked() {
     // todo 全部加载完之后出现提示并且按钮不可点击也不再请求
     const offset = animeRecordData.length;
-    if (props.searchText !== '') {
-      GET(`${BASE_URL}/api/anime_record/search?offset=${offset}&searchText=${props.searchText}`)
+    if (searchText !== '') {
+      GET(`${BASE_URL}/api/anime_record/search?offset=${offset}&searchText=${searchText}`)
         .then(data => {
           data = data.data;
           dispatch(appendToTrailingMulti(data));
