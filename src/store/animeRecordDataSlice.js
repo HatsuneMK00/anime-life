@@ -33,6 +33,12 @@ export const animeRecordDataSlice = createSlice({
   }
 })
 
-export const {appendToLeading, appendToTrailingMulti, setRecordState, deleteById, updateById} = animeRecordDataSlice.actions;
+export const {
+  appendToLeading,
+  appendToTrailingMulti,
+  setRecordState,
+  deleteById,
+  updateById
+} = animeRecordDataSlice.actions;
 
 export default animeRecordDataSlice.reducer;

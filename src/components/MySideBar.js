@@ -2,29 +2,27 @@ import {Button, Col, Row} from "react-bootstrap";
 import './MySideBar.css';
 import SideBarItem from "./SideBarItem";
 import {GrAdd} from "react-icons/gr";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {BASE_URL, GET} from "../global/network";
+import {useDispatch, useSelector} from "react-redux";
+import {setSummaryState} from "../store/animeRecordSummarySlice";
 
 function MySideBar(props) {
-  const [sideBarData, setSideBarData] = useState({
-    all: 0,
-    ratingOne: 0,
-    ratingTwo: 0,
-    ratingThree: 0,
-    ratingFour: 0,
-  });
+  const sideBarData = useSelector(state => state.animeRecordSummary.value);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     GET(`${BASE_URL}/api/anime_record/summary`)
       .then(data => {
         data = data.data;
-        setSideBarData({
+        const animeRecordSummary = {
           all: data.total_count,
           ratingOne: data.rating_one_count,
           ratingTwo: data.rating_two_count,
           ratingThree: data.rating_three_count,
           ratingFour: data.rating_four_count,
-        })
+        }
+        dispatch(setSummaryState(animeRecordSummary));
       })
   }, []);
 

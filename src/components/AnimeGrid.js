@@ -7,6 +7,7 @@ import {AiOutlineEdit} from "react-icons/ai";
 import {MAX_RATING} from "../global/anime_record";
 import {setRecordState, appendToTrailingMulti, deleteById, updateById} from "../store/animeRecordDataSlice";
 import {useDispatch, useSelector} from "react-redux";
+import {decrementRating} from "../store/animeRecordSummarySlice";
 
 
 /*
@@ -80,6 +81,7 @@ function AnimeDetailModal(props) {
         setShowDeleteLoading(false);
         props.onHide();
         dispatch(deleteById(props.animeId));
+        dispatch(decrementRating(props.animeRating));
       })
       .catch(err => {
         console.log(err);
@@ -216,7 +218,6 @@ function AnimeGrid(props) {
 
   // todo 数据缓存到自己的服务器 已有数据的就不请求了
 
-  // const [animeData, setAnimeData] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [modalData, setModalData] = useState({
     animeId: 0,

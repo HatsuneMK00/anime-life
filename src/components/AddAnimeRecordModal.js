@@ -1,10 +1,10 @@
 import {Button, Form, Modal} from "react-bootstrap";
 import './AddAnimeRecordModal.css'
 import {useState} from "react";
-import {sleep} from "../global/utils";
 import {BASE_URL, POST} from "../global/network";
 import {useDispatch} from "react-redux";
 import {appendToLeading} from "../store/animeRecordDataSlice";
+import {incrementRating} from "../store/animeRecordSummarySlice";
 
 function AddAnimeRecordModal(props) {
 
@@ -34,6 +34,7 @@ function AddAnimeRecordModal(props) {
           name_jp: anime.name_jp
         }
         dispatch(appendToLeading(animeRecord));
+        dispatch(incrementRating(animeRecord.rating));
         // This log doesn't show the latest state of animeRecordData
         // console.log(animeRecordData);
       })
