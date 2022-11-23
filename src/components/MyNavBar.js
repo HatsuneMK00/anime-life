@@ -1,15 +1,29 @@
 import {Button, Container, Form, Nav, Navbar, NavDropdown} from "react-bootstrap";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import './MyNavBar.css';
 import {useDispatch, useSelector} from "react-redux";
 import {setSearchText} from "../store/searchTextSlice";
 import {BASE_URL, GET} from "../global/network";
 import {setRecordState} from "../store/animeRecordDataSlice";
+import {useNavigate} from "react-router-dom";
 
 function MyNavBar(props) {
   // FIXME search text dispatch action every time when the search text is changed
   const searchText = useSelector(state => state.searchText.value);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    GET(`${BASE_URL}/api/user/info`)
+      .then(data => {
+        if (data.code === 200) {
+          setUserName(data.data.username)
+        } else {
+          setUserName('Unknown');
+        }
+      })
+  }, []);
 
   function handleSearchClicked() {
     GET(`${BASE_URL}/api/anime_record/search?searchText=${searchText}`)
@@ -21,6 +35,11 @@ function MyNavBar(props) {
       .catch(err => {
         console.log(err);
       })
+  }
+
+  function handleLogoutClicked() {
+    localStorage.removeItem('token');
+    navigate('/login');
   }
 
   return (
@@ -41,8 +60,8 @@ function MyNavBar(props) {
               />
               <Button variant="outline-success" onClick={() => handleSearchClicked()}>Search</Button>
             </Form>
-            <NavDropdown title="User" id="basic-nav-dropdown" className="">
-              <NavDropdown.Item href="#action/3.1">Logout</NavDropdown.Item>
+            <NavDropdown title={userName} id="basic-nav-dropdown" className="">
+              <NavDropdown.Item href="#action/3.1" onClick={() => handleLogoutClicked()}>Logout</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
