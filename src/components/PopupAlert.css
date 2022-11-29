@@ -1,0 +1,25 @@
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    /*z-index: 100;*/
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.rise-bottom {
+    animation: riseBottom 0.2s ease;
+}
+
+@keyframes riseBottom {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}

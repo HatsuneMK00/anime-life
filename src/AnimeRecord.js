@@ -6,6 +6,9 @@ import AddAnimeRecordModal from "./components/AddAnimeRecordModal";
 import {useEffect, useState} from "react";
 import './AnimeRecord.css';
 import {BASE_URL_WS} from "./global/network";
+import PopupAlert from "./components/PopupAlert";
+import {useSelector} from "react-redux";
+import {animated, useTransition} from "@react-spring/web";
 
 const socket = new WebSocket(BASE_URL_WS);
 
@@ -16,6 +19,12 @@ function AnimeRecord() {
   // state for info controlled by websocket
   // TODO use redux to manage state? should have better implementation
   const [loadingMsgOfAddAnime, setLoadingMsgOfAddAnime] = useState('请稍等...');
+  const showPopupAlert = useSelector(state => state.globalStatus.showPopupAlert);
+  const transition = useTransition(showPopupAlert, {
+    from: {y: 100},
+    enter: {y: 0},
+    leave: {y: 100},
+  });
 
   useEffect(() => {
     socket.onopen = () => {
@@ -43,21 +52,25 @@ function AnimeRecord() {
   }, [])
 
   return (
-    <div className="overall-container">
-      <MyNavBar setChosenSideBarItem={setChosenSideBarItem} />
-      <Container fluid className="main-container p-0">
-        <Row className="flex-xl-nowrap h-100">
-          <MySideBar chosen={chosenSideBarItem}
-                     choose={setChosenSideBarItem}
-                     showAddAnimeModal={setAddAnimeModalShow}/>
-          <AnimeGrid rating={chosenSideBarItem}/>
-        </Row>
-      </Container>
-      <AddAnimeRecordModal
-        show={addAnimeModalShow}
-        onHide={() => setAddAnimeModalShow(false)}
-        loadingmsg={loadingMsgOfAddAnime}/>
-    </div>
+    <>
+      <div className="overall-container">
+        <MyNavBar setChosenSideBarItem={setChosenSideBarItem}/>
+        <Container fluid className="main-container p-0">
+          <Row className="flex-xl-nowrap h-100">
+            <MySideBar chosen={chosenSideBarItem}
+                       choose={setChosenSideBarItem}
+                       showAddAnimeModal={setAddAnimeModalShow}/>
+            <AnimeGrid rating={chosenSideBarItem}/>
+          </Row>
+        </Container>
+        <AddAnimeRecordModal
+          show={addAnimeModalShow}
+          onHide={() => setAddAnimeModalShow(false)}
+          loadingmsg={loadingMsgOfAddAnime}/>
+      </div>
+      {transition((style, item) =>
+        item && <animated.div style={style}><PopupAlert/></animated.div>)}
+    </>
   )
 }
 

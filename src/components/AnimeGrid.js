@@ -1,13 +1,14 @@
 import {Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './AnimeGrid.css'
 import {BASE_URL, GET, POST} from "../global/network";
 import {BsStar, BsStarFill} from "react-icons/bs";
 import {AiOutlineEdit} from "react-icons/ai";
 import {MAX_RATING} from "../global/anime_record";
-import {setRecordState, appendToTrailingMulti, deleteById, updateById} from "../store/animeRecordDataSlice";
+import {appendToTrailingMulti, deleteById, setRecordState, updateById} from "../store/animeRecordDataSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {decrementRating} from "../store/animeRecordSummarySlice";
+import {setShowPopupAlert} from "../store/globalStatus";
 
 
 /*
@@ -61,13 +62,31 @@ function AnimeDetailModal(props) {
           cover: anime.cover,
         }
         dispatch(updateById(animeRecord));
+        dispatch(setShowPopupAlert({
+          show: true,
+          variant: 'success',
+          message: '更新动画记录成功',
+        }));
+        setTimeout(() => {
+          dispatch(setShowPopupAlert({
+            show: false,
+          }));
+        }, 2000)
       })
       .catch(err => {
         console.log(err);
         setShowLoading(false);
         props.onHide();
-        // todo use a better way to show error message
-        alert("Fail to update the anime record");
+        dispatch(setShowPopupAlert({
+          show: true,
+          variant: 'danger',
+          message: '更新动画记录失败',
+        }));
+        setTimeout(() => {
+          dispatch(setShowPopupAlert({
+            show: false,
+          }));
+        }, 2000)
       })
   }
 
@@ -82,12 +101,31 @@ function AnimeDetailModal(props) {
         props.onHide();
         dispatch(deleteById(props.animeId));
         dispatch(decrementRating(props.animeRating));
+        dispatch(setShowPopupAlert({
+          show: true,
+          variant: 'success',
+          message: '删除动画记录成功',
+        }));
+        setTimeout(() => {
+          dispatch(setShowPopupAlert({
+            show: false,
+          }));
+        }, 2000)
       })
       .catch(err => {
         console.log(err);
         setShowDeleteLoading(false);
         props.onHide();
-        alert("Fail to delete the anime record");
+        dispatch(setShowPopupAlert({
+          show: true,
+          variant: 'danger',
+          message: '删除动画记录失败',
+        }));
+        setTimeout(() => {
+          dispatch(setShowPopupAlert({
+            show: false,
+          }));
+        }, 2000)
       })
   }
 
@@ -100,19 +138,12 @@ function AnimeDetailModal(props) {
       centered>
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          对图像和名称有疑问？
+          {props.animeName}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body
         scrollable="true">
         <Form>
-          <Form.Group as={Row} className="mb-3" controlId="animeName">
-            <Form.Label column sm="2">动画名称</Form.Label>
-            <Col sm="10">
-              <Form.Control plaintext readOnly defaultValue={props.animeName} className="modal__anime-name"/>
-            </Col>
-          </Form.Group>
-
           <Form.Group as={Row} className="mb-3" controlId="animeName">
             <Form.Label column sm="2">Bangumi ID</Form.Label>
             <Col sm="9">
@@ -123,7 +154,8 @@ function AnimeDetailModal(props) {
                 name="bangumiId"/>
             </Col>
             <Col sm="1" className="d-flex flex-column align-items-center justify-content-center">
-              <AiOutlineEdit size="1.2em" onClick={() => setIsBangumiIdEditable(prevState => !prevState)} className="modal__edit-button" />
+              <AiOutlineEdit size="1.2em" onClick={() => setIsBangumiIdEditable(prevState => !prevState)}
+                             className="modal__edit-button"/>
             </Col>
           </Form.Group>
 
@@ -136,22 +168,24 @@ function AnimeDetailModal(props) {
                 name="animeRating"
                 aria-label="animeRatingSelect">
                 <option>选择评价</option>
-                <option value="1">非常一般   ★</option>
-                <option value="2">有点意思   ★★</option>
-                <option value="3">好看   ★★★</option>
-                <option value="4">神作   ★★★★</option>
+                <option value="1">非常一般 ★</option>
+                <option value="2">有点意思 ★★</option>
+                <option value="3">好看 ★★★</option>
+                <option value="4">神作 ★★★★</option>
               </Form.Select>
             </Col>
           </Form.Group>
 
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
-            <Button variant="outline-primary" className="w-50" disabled={showLoading} onClick={() => handleSubmitClicked()}>
+            <Button variant="outline-primary" className="w-50" disabled={showLoading}
+                    onClick={() => handleSubmitClicked()}>
               {showLoading ? '请稍等...' : '更新'}
             </Button>
           </div>
 
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
-            <Button variant="outline-danger" className="w-50" disabled={showDeleteLoading} onClick={() => handleDeleteClicked()}>
+            <Button variant="outline-danger" className="w-50" disabled={showDeleteLoading}
+                    onClick={() => handleDeleteClicked()}>
               {showDeleteLoading ? '正在删除' : '删除该记录'}
             </Button>
           </div>
@@ -302,7 +336,8 @@ function AnimeGrid(props) {
             {animeCards}
           </Row>
         </Container>
-        <Button variant="outline-primary" className="button__load-more" onClick={handleLoadMoreClicked}>Load More...</Button>
+        <Button variant="outline-primary" className="button__load-more" onClick={handleLoadMoreClicked}>Load
+          More...</Button>
       </Container>
       <AnimeDetailModal {...modalData} show={modalShow} onHide={() => setModalShow(false)} setModalData={setModalData}/>
     </>

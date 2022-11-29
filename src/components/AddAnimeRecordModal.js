@@ -5,6 +5,7 @@ import {BASE_URL, POST} from "../global/network";
 import {useDispatch} from "react-redux";
 import {appendToLeading} from "../store/animeRecordDataSlice";
 import {incrementRating} from "../store/animeRecordSummarySlice";
+import {setShowPopupAlert} from "../store/globalStatus";
 
 function AddAnimeRecordModal(props) {
 
@@ -35,6 +36,16 @@ function AddAnimeRecordModal(props) {
         }
         dispatch(appendToLeading(animeRecord));
         dispatch(incrementRating(animeRecord.rating));
+        dispatch(setShowPopupAlert({
+          show: true,
+          variant: 'success',
+          message: '添加成功',
+        }));
+        setTimeout(() => {
+          dispatch(setShowPopupAlert({
+            show: false,
+          }));
+        }, 2000)
         // This log doesn't show the latest state of animeRecordData
         // console.log(animeRecordData);
       })
@@ -42,8 +53,16 @@ function AddAnimeRecordModal(props) {
         console.log(err);
         setShowLoading(false);
         props.onHide();
-        // todo use a better way to show error message
-        alert("Fail to add the anime record");
+        dispatch(setShowPopupAlert({
+          show: true,
+          variant: 'danger',
+          message: '添加动画记录失败',
+        }));
+        setTimeout(() => {
+          dispatch(setShowPopupAlert({
+            show: false,
+          }));
+        }, 2000)
       })
       .finally(() => {
         setFormData({
