@@ -17,7 +17,9 @@ function AddAnimeRecordModal(props) {
     const requestData = {
       animeName: formData.animeName,
       animeRating: parseInt(formData.animeRating),
+      comment: formData.comment,
     }
+    console.log(requestData);
     POST(`${BASE_URL}/api/anime_record/addRecord`, requestData)
       .then(data => {
         setShowLoading(false);
@@ -36,6 +38,7 @@ function AddAnimeRecordModal(props) {
           name_jp: anime.name_jp,
           watch_count: record.watch_count,
         }
+        console.log(animeRecord);
         let contains = false;
         for (let i = 0; i < currentAnimeRecords.length; i++) {
           if (currentAnimeRecords[i].id === animeRecord.id) {
@@ -82,6 +85,7 @@ function AddAnimeRecordModal(props) {
         setFormData({
           animeName: '',
           animeRating: -2,
+          comment: '',
         })
       })
   }
@@ -89,6 +93,7 @@ function AddAnimeRecordModal(props) {
   const [formData, setFormData] = useState({
     animeName: '',
     animeRating: -2,
+    comment: '',
   });
 
   const [showLoading, setShowLoading] = useState(false);
@@ -138,22 +143,35 @@ function AddAnimeRecordModal(props) {
               name="animeRating"
               aria-label="animeRatingSelect">
               <option>选择评价</option>
-              <option value="1">非常一般   ★</option>
-              <option value="2">有点意思   ★★</option>
-              <option value="3">好看   ★★★</option>
-              <option value="4">神作   ★★★★</option>
+              <option value="1">非常一般 ★</option>
+              <option value="2">有点意思 ★★</option>
+              <option value="3">好看 ★★★</option>
+              <option value="4">神作 ★★★★</option>
             </Form.Select>
           </Form.Group>
 
-          <div className="m-auto pt-3 align-items-center d-flex flex-column">
-            <Button variant="outline-primary" className="w-50" disabled={showLoading} onClick={() => handleSubmitClicked()}>
-              {showLoading ? props.loadingmsg : '提交'}
-            </Button>
-          </div>
+          <Form.Group className="mb-3" controlId="comment">
+            <Form.Label>评论一下</Form.Label>
+            <Form.Control
+              as={"textarea"}
+              rows={3}
+              value={formData.comment}
+              onChange={handleChange}
+              name="comment"
+              type="text"
+              placeholder="随便写点什么"/>
+          </Form.Group>
+
+            <div className="m-auto pt-3 align-items-center d-flex flex-column">
+              <Button variant="outline-primary" className="w-50" disabled={showLoading}
+                      onClick={() => handleSubmitClicked()}>
+                {showLoading ? props.loadingmsg : '提交'}
+              </Button>
+            </div>
         </Form>
       </Modal.Body>
     </Modal>
-  );
+);
 }
 
 export default AddAnimeRecordModal;

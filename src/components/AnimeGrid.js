@@ -43,7 +43,9 @@ function AnimeDetailModal(props) {
       // convert props.bangumiId to int if it is string, otherwise stay the same
       bangumiId: typeof props.bangumiId === 'string' ? parseInt(props.bangumiId) : props.bangumiId,
       animeRating: parseInt(props.animeRating),
+      comment: props.comment
     }
+    console.log(requestData)
     // console.log(requestData)
     POST(`${BASE_URL}/api/anime_record/updateRecord`, requestData)
       .then(data => {
@@ -62,6 +64,7 @@ function AnimeDetailModal(props) {
           cover: anime.cover,
           watch_count: record.watch_count,
         }
+        console.log(animeRecord)
         dispatch(updateById(animeRecord));
         dispatch(setShowPopupAlert({
           show: true,
@@ -177,6 +180,18 @@ function AnimeDetailModal(props) {
             </Col>
           </Form.Group>
 
+          <Form.Group as={Row} className="mb-3" controlId="comment">
+            <Form.Label column sm="2">评论一下</Form.Label>
+            <Col sm="9">
+              <Form.Control
+                as="textarea"
+                value={props.comment}
+                onChange={handleChange}
+                name="comment"
+                rows={3}/>
+            </Col>
+          </Form.Group>
+
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
             <Button variant="outline-primary" className="w-50" disabled={showLoading}
                     onClick={() => handleSubmitClicked()}>
@@ -223,6 +238,7 @@ function AnimeCard(props) {
       animeName: props.name,
       bangumiId: props.bangumi_id,
       animeRating: props.rating,
+      comment: props.comment,
     })
     props.showAnimeDetailModal(true)
   }
@@ -264,6 +280,7 @@ function AnimeGrid(props) {
     animeName: '',
     bangumiId: -1,
     animeRating: 0,
+    comment: '',
   });
   const animeRecordData = useSelector((state) => state.animeRecordData.value);
   const searchText = useSelector((state) => state.searchText.value);

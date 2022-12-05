@@ -10,20 +10,19 @@ export const animeRecordDataSlice = createSlice({
       state.value = [action.payload, ...state.value];
     },
     appendToTrailingMulti: (state, action) => {
-      state.value = [...state.value, ...action.payload];
+      const newData = action.payload.map(data => {
+        return {
+          ...data,
+          record_at: data.modify_at > data.record_at ? data.modify_at : data.record_at,
+        }
+      })
+      state.value = [...state.value, ...newData];
     },
     setRecordState: (state, action) => {
       state.value = action.payload.map(data => {
           return {
-            id: data.id,
+            ...data,
             record_at: data.modify_at > data.record_at ? data.modify_at : data.record_at,
-            rating: data.rating,
-            comment: data.comment,
-            bangumi_id: data.bangumi_id,
-            cover: data.cover,
-            name: data.name,
-            name_jp: data.name_jp,
-            watch_count: data.watch_count,
           }
         }
       );
