@@ -53,13 +53,14 @@ function AnimeDetailModal(props) {
         const record = data.data.record
         const animeRecord = {
           id: record.anime_id,
-          record_at: record.created_at,
+          record_at: record.updated_at > record.created_at ? record.updated_at : record.created_at,
           rating: record.rating,
           comment: record.comment,
           bangumi_id: anime.bangumi_id,
           name: anime.name,
           name_jp: anime.name_jp,
           cover: anime.cover,
+          watch_count: record.watch_count,
         }
         dispatch(updateById(animeRecord));
         dispatch(setShowPopupAlert({

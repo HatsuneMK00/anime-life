@@ -13,7 +13,20 @@ export const animeRecordDataSlice = createSlice({
       state.value = [...state.value, ...action.payload];
     },
     setRecordState: (state, action) => {
-      state.value = action.payload;
+      state.value = action.payload.map(data => {
+          return {
+            id: data.id,
+            record_at: data.modify_at > data.record_at ? data.modify_at : data.record_at,
+            rating: data.rating,
+            comment: data.comment,
+            bangumi_id: data.bangumi_id,
+            cover: data.cover,
+            name: data.name,
+            name_jp: data.name_jp,
+            watch_count: data.watch_count,
+          }
+        }
+      );
     },
     deleteById: (state, action) => {
       const animeId = action.payload;
