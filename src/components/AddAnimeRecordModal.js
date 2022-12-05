@@ -2,13 +2,14 @@ import {Button, Form, Modal} from "react-bootstrap";
 import './AddAnimeRecordModal.css'
 import {useState} from "react";
 import {BASE_URL, POST} from "../global/network";
-import {useDispatch} from "react-redux";
-import {appendToLeading} from "../store/animeRecordDataSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {appendToLeading, deleteById} from "../store/animeRecordDataSlice";
 import {incrementRating} from "../store/animeRecordSummarySlice";
 import {setShowPopupAlert} from "../store/globalStatus";
 
 function AddAnimeRecordModal(props) {
 
+  const currentAnimeRecords = useSelector(state => state.animeRecordData.value);
   const dispatch = useDispatch();
 
   function handleSubmitClicked() {
@@ -26,16 +27,29 @@ function AddAnimeRecordModal(props) {
         const record = data.data.record
         const animeRecord = {
           id: record.anime_id,
-          record_at: record.created_at,
+          record_at: record.updated_at > record.created_at ? record.updated_at : record.created_at,
           rating: record.rating,
           comment: record.comment,
           bangumi_id: anime.bangumi_id,
           cover: anime.cover,
           name: anime.name,
-          name_jp: anime.name_jp
+          name_jp: anime.name_jp,
+          watch_count: record.watch_count,
         }
-        dispatch(appendToLeading(animeRecord));
-        dispatch(incrementRating(animeRecord.rating));
+        let contains = false;
+        for (let i = 0; i < currentAnimeRecords.length; i++) {
+          if (currentAnimeRecords[i].id === animeRecord.id) {
+            contains = true;
+            break;
+          }
+        }
+        if (!contains) {
+          dispatch(appendToLeading(animeRecord));
+          dispatch(incrementRating(animeRecord.rating));
+        } else {
+          dispatch(deleteById(animeRecord.id));
+          dispatch(appendToLeading(animeRecord));
+        }
         dispatch(setShowPopupAlert({
           show: true,
           variant: 'success',

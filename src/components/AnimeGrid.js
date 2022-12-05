@@ -244,6 +244,11 @@ function AnimeCard(props) {
         }
         <RatingRow rating={props.rating}/>
       </div>
+      {props.watch_count >= 2 &&
+        <div className="anime-card__watch-count">
+          {props.watch_count} 刷
+        </div>
+      }
     </div>
   )
 }
