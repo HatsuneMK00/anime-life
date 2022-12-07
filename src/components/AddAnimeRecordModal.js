@@ -27,6 +27,7 @@ function AddAnimeRecordModal(props) {
         console.log(data);
         const anime = data.data.anime
         const record = data.data.record
+        const isNew = data.data.is_new
         const animeRecord = {
           id: record.anime_id,
           record_at: record.updated_at > record.created_at ? record.updated_at : record.created_at,
@@ -38,15 +39,7 @@ function AddAnimeRecordModal(props) {
           name_jp: anime.name_jp,
           watch_count: record.watch_count,
         }
-        console.log(animeRecord);
-        let contains = false;
-        for (let i = 0; i < currentAnimeRecords.length; i++) {
-          if (currentAnimeRecords[i].id === animeRecord.id) {
-            contains = true;
-            break;
-          }
-        }
-        if (!contains) {
+        if (isNew) {
           dispatch(appendToLeading(animeRecord));
           dispatch(incrementRating(animeRecord.rating));
         } else {
