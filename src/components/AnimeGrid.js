@@ -2,7 +2,7 @@ import {Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
 import React, {useEffect, useState} from 'react';
 import './AnimeGrid.css'
 import {BASE_URL, GET, POST} from "../global/network";
-import {BsStar, BsStarFill} from "react-icons/bs";
+import {BsArrowLeftCircle, BsArrowRightCircle, BsStar, BsStarFill} from "react-icons/bs";
 import {AiOutlineEdit} from "react-icons/ai";
 import {MAX_RATING} from "../global/anime_record";
 import {appendToTrailingMulti, deleteById, setRecordState, updateById} from "../store/animeRecordDataSlice";
@@ -21,8 +21,28 @@ function AnimeDetailModal(props) {
   const [showLoading, setShowLoading] = useState(false);
   const [showDeleteLoading, setShowDeleteLoading] = useState(false);
   const [isBangumiIdEditable, setIsBangumiIdEditable] = useState(false);
+  const [hasHistoryRating, setHasHistoryRating] = useState(false);
 
   const dispatch = useDispatch();
+
+  // fetch history rating if watch count larger than 1
+  const [historyRating, setHistoryRating] = useState([]);
+  const [historyRatingIdx, setHistoryRatingIdx] = useState(0);
+  useEffect(() => {
+    setHasHistoryRating(false);
+    setHistoryRatingIdx(0);
+    if (props.watchCount >= 2) {
+      GET(`${BASE_URL}/api/anime_record/history_rating?animeId=${props.animeId}`)
+        .then(data => {
+          setHasHistoryRating(true);
+          setHistoryRating(data.data);
+        })
+        .catch(error => {
+          setHasHistoryRating(false);
+          console.log(error);
+        })
+    }
+  }, [props.animeId])
 
   function handleChange(e) {
     const {name, value} = e.target
@@ -167,9 +187,10 @@ function AnimeDetailModal(props) {
             <Form.Label column sm="2">评价</Form.Label>
             <Col sm="9">
               <Form.Select
-                value={props.animeRating}
+                value={historyRatingIdx === 0 ? props.animeRating : historyRating[historyRatingIdx - 1].rating}
                 onChange={handleChange}
                 name="animeRating"
+                disabled={historyRatingIdx !== 0}
                 aria-label="animeRatingSelect">
                 <option>选择评价</option>
                 <option value="1">非常一般 ★</option>
@@ -185,12 +206,52 @@ function AnimeDetailModal(props) {
             <Col sm="9">
               <Form.Control
                 as="textarea"
-                value={props.comment}
+                value={historyRatingIdx === 0 ? props.comment : historyRating[historyRatingIdx - 1].comment}
                 onChange={handleChange}
                 name="comment"
+                disabled={historyRatingIdx !== 0}
                 rows={3}/>
             </Col>
           </Form.Group>
+
+          {props.watchCount >= 2 &&
+            <div className="history-rating-switcher">
+              <BsArrowLeftCircle
+                style={{
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  setHistoryRatingIdx(prevState => {
+                    if (prevState === 0) {
+                      return 0;
+                    } else {
+                      return prevState - 1;
+                    }
+                  })
+                }}/>
+              <div style={{
+                fontSize: '0.7em',
+                marginLeft: '0.5em',
+                marginRight: '0.5em',
+                width: '10%',
+                textAlign: 'center',
+              }}>
+                {historyRatingIdx + 1} / {historyRating.length + 1}
+              </div>
+              <BsArrowRightCircle
+                style={{
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  setHistoryRatingIdx(prevState => {
+                    if (prevState === historyRating.length) {
+                      return prevState
+                    }
+                    return prevState + 1
+                  })
+                }}/>
+            </div>
+          }
 
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
             <Button variant="outline-primary" className="w-50" disabled={showLoading}
@@ -232,19 +293,21 @@ function AnimeCard(props) {
     )
   }
 
-  function handleCardCLicked() {
+  function handleCardClicked() {
     props.setAnimeDetail({
       animeId: props.id,
       animeName: props.name,
       bangumiId: props.bangumi_id,
       animeRating: props.rating,
       comment: props.comment,
+      watchCount: props.watch_count,
+      recordAt: props.record_at,
     })
     props.showAnimeDetailModal(true)
   }
 
   return (
-    <div className="anime-card" onClick={handleCardCLicked}>
+    <div className="anime-card" onClick={handleCardClicked}>
       <img src={props.cover} alt="Cover" className="anime-card__cover"/>
       <div className="anime-card__info">
         <div className="anime-card__name">
