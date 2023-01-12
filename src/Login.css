@@ -28,3 +28,11 @@
     text-align: center;
     margin: 0 auto;
 }
+
+.login__btn {
+    color: white;
+}
+
+.login__btn:hover {
+    color: #232529;
+}

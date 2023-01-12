@@ -8,11 +8,12 @@ import AnimeRecord from "./AnimeRecord";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import store from "./store";
 import {Provider} from "react-redux";
+import Welcome from "./Welcome";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to={"/anime_record"} replace/>
+    element: <Navigate to={"/welcome"} replace/>
   },
   {
     path: "/login",
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "/anime_record",
     element: <ProtectedRoute><AnimeRecord /></ProtectedRoute>
+  },
+  {
+    path: "/welcome",
+    element: <Welcome />
   }
 ]);
 

@@ -69,7 +69,7 @@ function Login() {
           }
 
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
-            <Button variant="outline-primary" className="w-50" disabled={showLoading}
+            <Button variant="outline-light" className="w-50 login__btn" disabled={showLoading}
                     onClick={() => handleSubmitClicked()}>
               {showLoading ? '正在登录...' : '登录'}
             </Button>

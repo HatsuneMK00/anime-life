@@ -1,0 +1,22 @@
+.bg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #232529;
+    color: white;
+}
+
+.to-login__btn {
+    color: white;
+}
+
+.to-login__btn:hover {
+    color: #232529;
+}
