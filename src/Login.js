@@ -11,7 +11,8 @@ function Login() {
   const [showErrMsg, setShowErrMsg] = useState(false);
   const navigate = useNavigate();
 
-  function handleSubmitClicked() {
+  function handleSubmitClicked(event) {
+    event.preventDefault();
     setShowLoading(true);
     setShowErrMsg(false);
 
@@ -43,7 +44,7 @@ function Login() {
     <div className="login-container">
       <Container className="login-form">
         <h1 className="login-form__title mb-5">Login</h1>
-        <Form className="login-form__inner">
+        <Form className="login-form__inner" onSubmit={(event) => handleSubmitClicked(event)}>
           <Form.Group className="mb-4" controlId="username">
             <Form.Control
               type="text"
@@ -69,8 +70,7 @@ function Login() {
           }
 
           <div className="m-auto pt-3 align-items-center d-flex flex-column">
-            <Button variant="outline-light" className="w-50 login__btn" disabled={showLoading}
-                    onClick={() => handleSubmitClicked()}>
+            <Button variant="outline-light" className="w-50 login__btn" disabled={showLoading} type="submit">
               {showLoading ? '正在登录...' : '登录'}
             </Button>
           </div>
