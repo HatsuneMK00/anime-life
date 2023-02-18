@@ -1,5 +1,5 @@
 import {Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './AnimeGrid.css'
 import {BASE_URL, GET, POST} from "../global/network";
 import {BsArrowLeftCircle, BsArrowRightCircle, BsStar, BsStarFill} from "react-icons/bs";
@@ -349,6 +349,8 @@ function AnimeGrid(props) {
   const searchText = useSelector((state) => state.searchText.value);
   const dispatch = useDispatch();
 
+  const animeGridRef = useRef();
+
   useEffect(() => {
     if (props.rating === 0) {
       GET(`${BASE_URL}/api/anime_record`)
@@ -369,24 +371,21 @@ function AnimeGrid(props) {
           console.log(err);
         })
     }
-
+    setHasMore(true)
+    animeGridRef.current.scrollTo({top: 0})
   }, [props.rating]);
 
-  const animeCards = animeRecordData.map((anime) => {
-    return (
-      <Col key={anime.id} className="pt-2 pb-2">
-        <AnimeCard {...anime} setAnimeDetail={setModalData} showAnimeDetailModal={setModalShow}/>
-      </Col>
-    )
-  })
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
 
-  function handleLoadMoreClicked() {
-    // todo 全部加载完之后出现提示并且按钮不可点击也不再请求
+  const handleLoadMore = useCallback(() => {
     const offset = animeRecordData.length;
     if (searchText !== '') {
       GET(`${BASE_URL}/api/anime_record/search?offset=${offset}&searchText=${searchText}`)
         .then(data => {
           data = data.data;
+          if (data.length === 0) setHasMore(false)
+          setLoading(false)
           dispatch(appendToTrailingMulti(data));
         })
         .catch(err => {
@@ -396,6 +395,8 @@ function AnimeGrid(props) {
       GET(`${BASE_URL}/api/anime_record?offset=${offset}`)
         .then(data => {
           data = data.data;
+          if (data.length === 0) setHasMore(false)
+          setLoading(false)
           dispatch(appendToTrailingMulti(data));
         })
         .catch(err => {
@@ -405,25 +406,56 @@ function AnimeGrid(props) {
       GET(`${BASE_URL}/api/anime_record/rating/${props.rating}?offset=${offset}`)
         .then(data => {
           data = data.data;
+          if (data.length === 0) setHasMore(false)
+          setLoading(false)
           dispatch(appendToTrailingMulti(data));
         })
         .catch(err => {
           console.log(err);
         })
     }
-  }
+  }, [animeRecordData, props.rating, searchText])
+
+  const observer = useRef()
+  const lastCardRef = useCallback(node => {
+    if (loading) return
+    if (observer.current) observer.current.disconnect()
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        setLoading(true)
+        handleLoadMore()
+      }
+    })
+    if (node) observer.current.observe(node)
+  }, [loading, hasMore, handleLoadMore])
+
+  const animeCards = animeRecordData.map((anime, index) => {
+      if (animeRecordData.length === index + 1) {
+        return <div ref={lastCardRef} key={anime.id}>
+          <Col className="pt-2 pb-2">
+            <AnimeCard {...anime} setAnimeDetail={setModalData} showAnimeDetailModal={setModalShow}/>
+          </Col>
+        </div>
+      } else {
+        return <div key={anime.id}>
+          <Col className="pt-2 pb-2">
+            <AnimeCard {...anime} setAnimeDetail={setModalData} showAnimeDetailModal={setModalShow}/>
+          </Col>
+        </div>
+      }
+  })
 
   return (
     <>
-      <Container className="col-8 col-xl-10 col-md-9 p-0 me-0 anime-grid-container">
+      <Container className="col-8 col-xl-10 col-md-9 p-0 me-0 anime-grid-container" ref={animeGridRef}>
         <Container fluid className="pe-2">
           {/* 4 columns in a row on large screen, 3 columns in a row on a medium screen and 2 columns in a row on a small screen */}
           <Row sm={2} md={3} lg={4} xs={1} xl={5} xxl={5} className="pe-3">
             {animeCards}
           </Row>
         </Container>
-        <Button variant="outline-primary" className="button__load-more" onClick={handleLoadMoreClicked}>Load
-          More...</Button>
+        <div>{loading && "Loading..."}</div>
+        <div>{!hasMore && "That's All"}</div>
       </Container>
       <AnimeDetailModal {...modalData} show={modalShow} onHide={() => setModalShow(false)} setModalData={setModalData}/>
     </>
