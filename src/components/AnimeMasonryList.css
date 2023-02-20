@@ -1,0 +1,12 @@
+.list {
+    position: relative;
+    width: 100%;
+}
+
+.card {
+    position: absolute;
+    will-change: transform, width, height, opacity;
+    padding: 15px;
+    background-color: #4f4f4f;
+    border-width: 0;
+}

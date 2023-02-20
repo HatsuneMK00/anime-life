@@ -9,6 +9,7 @@ import {BASE_URL_WS} from "./global/network";
 import PopupAlert from "./components/PopupAlert";
 import {useSelector} from "react-redux";
 import {animated, useTransition} from "@react-spring/web";
+import AnimeMasonryList from "./components/AnimeMasonryList";
 
 const socket = new WebSocket(BASE_URL_WS);
 
@@ -55,13 +56,13 @@ function AnimeRecord() {
     <>
       <div className="overall-container">
         <MyNavBar setChosenSideBarItem={setChosenSideBarItem}/>
-        <Container fluid className="main-container p-0">
-          <Row className="flex-xl-nowrap h-100">
-            <MySideBar chosen={chosenSideBarItem}
-                       choose={setChosenSideBarItem}
-                       showAddAnimeModal={setAddAnimeModalShow}/>
-            <AnimeGrid rating={chosenSideBarItem}/>
-          </Row>
+        <Container fluid className="main-container p-0 row m-0">
+          <MySideBar chosen={chosenSideBarItem}
+                     choose={setChosenSideBarItem}
+                     showAddAnimeModal={setAddAnimeModalShow}/>
+          <div className="col-8 col-xl-10 col-md-9 d-flex flex-column ms-0 p-0 list-container">
+            <AnimeMasonryList rating={chosenSideBarItem}/>
+          </div>
         </Container>
         <AddAnimeRecordModal
           show={addAnimeModalShow}

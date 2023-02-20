@@ -7,13 +7,18 @@ export const animeRecordDataSlice = createSlice({
   },
   reducers: {
     appendToLeading: (state, action) => {
-      state.value = [action.payload, ...state.value];
+      const newData = {
+        ...action.payload,
+        height: 800
+      }
+      state.value = [newData, ...state.value];
     },
     appendToTrailingMulti: (state, action) => {
       const newData = action.payload.map(data => {
         return {
           ...data,
           record_at: data.modify_at > data.record_at ? data.modify_at : data.record_at,
+          height: 800,
         }
       })
       state.value = [...state.value, ...newData];
@@ -23,6 +28,7 @@ export const animeRecordDataSlice = createSlice({
           return {
             ...data,
             record_at: data.modify_at > data.record_at ? data.modify_at : data.record_at,
+            height: 800,
           }
         }
       );
