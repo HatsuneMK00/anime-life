@@ -64,8 +64,8 @@
 
 .anime-card__watch-count {
     position: absolute;
-    bottom: 0.5rem;
-    right: 0.5rem;
+    bottom: 1.5rem;
+    right: 1.5rem;
     color: aquamarine;
     font-size: large;
 }

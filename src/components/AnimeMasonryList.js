@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import useMedia from "../hooks/useMedia";
 import useMeasure from "react-use-measure";
 import {useTransition, a} from "@react-spring/web";
@@ -26,19 +26,30 @@ function AnimeMasonryList(props) {
     dispatch(setRecordState([]))
     setOffset(0)
   }, [props.rating])
-
-  // Hook5: Form a grid of stacked items using width & columns we got from hooks 1 & 2
+  // Hook5: ref last card to load more
+  const observer = useRef()
+  const lastCardRef = useCallback(node => {
+    if (loading) return
+    if (observer.current) observer.current.disconnect()
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        setOffset(prev => prev + 15)
+      }
+    })
+    if (node) observer.current.observe(node)
+  }, [loading])
+  // Hook6: Form a grid of stacked items using width & columns we got from hooks 1 & 2
   const [heights, gridItems] = useMemo(() => {
     let heights = new Array(columns).fill(0)
     let gridItems = animeRecordData.map((item, index) => {
       const column = heights.indexOf(Math.min(...heights))
       const x = (width / columns) * column
       const y = (heights[column] += item.height / 2) - item.height / 2 + padding
-      return { ...item, x, y, width: width / columns, height: item.height / 2}
+      return { ...item, x, y, width: width / columns, height: item.height / 2, index: index}
     })
     return [heights, gridItems]
   }, [columns, animeRecordData, width])
-  // Hook6: Turn the static grid values into animated transitions, any addition, removal or change will be animated
+  // Hook7: Turn the static grid values into animated transitions, any addition, removal or change will be animated
   const transitions = useTransition(gridItems, {
     key: (item) => item.id,
     from: ({ x, y, width, height}) => ({ x, y ,width, height, opacity: 0}),
@@ -53,12 +64,24 @@ function AnimeMasonryList(props) {
     <>
       <div ref={ref} className="list">
         {transitions((style, item) => {
-          return (
-            <a.div className="card" style={style}>
-              <AnimeCard {...item} />
-            </a.div>
-          )
+          if (item.index + 1 === gridItems.length) {
+            return (
+              <a.div className="card" style={style} ref={lastCardRef}>
+                <AnimeCard {...item} />
+              </a.div>
+            )
+          } else {
+            return (
+              <a.div className="card" style={style}>
+                <AnimeCard {...item} />
+              </a.div>
+            )
+          }
         })}
+      </div>
+      <div>
+        {loading && "Loading..."}
+        {!hasMore && "No more records"}
       </div>
     </>
   );
