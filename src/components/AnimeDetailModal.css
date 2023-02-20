@@ -1,0 +1,9 @@
+.modal__anime-name {
+    font-size: 1rem;
+    font-weight: bold;
+    color: white !important;
+}
+
+.modal__edit-button:hover {
+    cursor: pointer;
+}
