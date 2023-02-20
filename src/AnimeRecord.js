@@ -1,7 +1,6 @@
 import MyNavBar from "./components/MyNavBar";
-import {Container, Row} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import MySideBar from "./components/MySideBar";
-import AnimeGrid from "./components/AnimeGrid";
 import AddAnimeRecordModal from "./components/AddAnimeRecordModal";
 import {useEffect, useState} from "react";
 import './AnimeRecord.css';
@@ -60,7 +59,7 @@ function AnimeRecord() {
           <MySideBar chosen={chosenSideBarItem}
                      choose={setChosenSideBarItem}
                      showAddAnimeModal={setAddAnimeModalShow}/>
-          <div className="col-8 col-xl-10 col-md-9 d-flex flex-column ms-0 p-0 list-container">
+          <div className="col-8 col-xl-10 col-md-9 d-flex flex-column ms-0 p-0">
             <AnimeMasonryList rating={chosenSideBarItem}/>
           </div>
         </Container>

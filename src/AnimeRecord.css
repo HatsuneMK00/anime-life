@@ -19,13 +19,3 @@
     justify-content: center;
     height: 100%;
 }
-
-.list-container {
-    align-items: center;
-    justify-content: flex-start;
-    /*background-color: #4f4f4f;*/
-    /*position: relative;*/
-    /*top: 3.5rem;*/
-    /*height: calc(100vh - 3.5rem);*/
-    overflow-y: scroll;
-}
