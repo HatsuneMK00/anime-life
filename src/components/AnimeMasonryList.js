@@ -25,9 +25,9 @@ function AnimeMasonryList(props) {
   // Hook3: Fetch data
   const dispatch = useDispatch();
   const animeRecordData = useSelector((state) => state.animeRecordData.value)
-  const searchText = useSelector((state) => state.searchText.value);
+  const goSearch = useSelector((state) => state.goSearch.value);
   const [offset, setOffset] = useState(0)
-  const { loading, hasMore } = useFetchAnimeRecord(props.rating, offset, searchText)
+  const { loading, hasMore } = useFetchAnimeRecord(props.rating, offset, goSearch)
   // Hook4: Clear data and offset when rating or searchText change
   // useEffect(() => {
   //   console.log("rating changed, clear data")

@@ -4,8 +4,8 @@ import './MyNavBar.css';
 import {useDispatch, useSelector} from "react-redux";
 import {setSearchText} from "../store/searchTextSlice";
 import {BASE_URL, GET} from "../global/network";
-import {setRecordState} from "../store/animeRecordDataSlice";
 import {useNavigate} from "react-router-dom";
+import {toggleGoSearch} from "../store/goSearchSlice";
 
 function MyNavBar(props) {
   // FIXME search text dispatch action every time when the search text is changed
@@ -26,15 +26,8 @@ function MyNavBar(props) {
   }, []);
 
   function handleSearchClicked() {
-    GET(`${BASE_URL}/api/anime_record/search?searchText=${searchText}`)
-      .then(data => {
-        data = data.data
-        dispatch(setRecordState(data))
-        props.setChosenSideBarItem(-2);
-      })
-      .catch(err => {
-        console.log(err);
-      })
+    dispatch(toggleGoSearch())
+    props.setChosenSideBarItem(-2)
   }
 
   function handleLogoutClicked() {
