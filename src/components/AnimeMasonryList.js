@@ -7,9 +7,17 @@ import useFetchAnimeRecord from "../hooks/useFetchAnimeRecord";
 import {useDispatch, useSelector} from "react-redux";
 import {setRecordState} from "../store/animeRecordDataSlice";
 import AnimeCard from "./AniimeCard";
+import AnimeDetailModal from "./AnimeDetailModal";
 
 function AnimeMasonryList(props) {
-  const padding = 15
+  const [showModal, setShowModal] = useState(false)
+  const [modalData, setModalData] = useState({
+    animeId: 0,
+    animeName: '',
+    bangumiId: -1,
+    animeRating: 0,
+    comment: '',
+  })
   // Hook1: Tie media queries to the number of columns
   const columns = useMedia(['(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)'], [5, 4, 3], 2)
   // Hook2: Measure the width of the container element
@@ -44,7 +52,7 @@ function AnimeMasonryList(props) {
     let gridItems = animeRecordData.map((item, index) => {
       const column = heights.indexOf(Math.min(...heights))
       const x = (width / columns) * column
-      const y = (heights[column] += item.height / 2) - item.height / 2 + padding
+      const y = (heights[column] += item.height / 2) - item.height / 2
       return { ...item, x, y, width: width / columns, height: item.height / 2, index: index}
     })
     return [heights, gridItems]
@@ -83,6 +91,7 @@ function AnimeMasonryList(props) {
         {loading && "Loading..."}
         {!hasMore && "No more records"}
       </div>
+      <AnimeDetailModal {...modalData} show={showModal} onHide={() => setShowModal(false)} setModalData={setModalData} />
     </>
   );
 }
