@@ -23,29 +23,31 @@ function AnimeMasonryList(props) {
   // Hook2: Measure the width of the container element
   const [ref, { width }] = useMeasure()
   // Hook3: Fetch data
-  const [offset, setOffset] = useState(0)
-  const { loading, hasMore } = useFetchAnimeRecord(props.rating, offset, "")
+  const dispatch = useDispatch();
   const animeRecordData = useSelector((state) => state.animeRecordData.value)
   const searchText = useSelector((state) => state.searchText.value);
-  const dispatch = useDispatch();
+  const [offset, setOffset] = useState(0)
+  const { loading, hasMore } = useFetchAnimeRecord(props.rating, offset, searchText)
   // Hook4: Clear data and offset when rating or searchText change
-  useEffect(() => {
-    console.log("rating changed, clear data and offset")
-    dispatch(setRecordState([]))
-    setOffset(0)
-  }, [props.rating])
+  // useEffect(() => {
+  //   console.log("rating changed, clear data")
+    // dispatch(setRecordState([]))
+    // setOffset(0)
+  // }, [props.rating, searchText])
   // Hook5: ref last card to load more
   const observer = useRef()
   const lastCardRef = useCallback(node => {
+    // console.log("lastCardRef callback called, loading is ", loading)
     if (loading) return
     if (observer.current) observer.current.disconnect()
     observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) {
-        setOffset(prev => prev + 15)
+      if (entries[0].isIntersecting && hasMore) {
+        console.log("interacting")
+        setOffset(animeRecordData.length)
       }
     })
     if (node) observer.current.observe(node)
-  }, [loading])
+  }, [loading, animeRecordData])
   // Hook6: Form a grid of stacked items using width & columns we got from hooks 1 & 2
   const [heights, gridItems] = useMemo(() => {
     let heights = new Array(columns).fill(0)
@@ -81,15 +83,11 @@ function AnimeMasonryList(props) {
           } else {
             return (
               <a.div className="card" style={style}>
-                <AnimeCard {...item} />
+                <AnimeCard {...item} setAnimeDetail={setModalData} showAnimeDetailModal={setShowModal} />
               </a.div>
             )
           }
         })}
-      </div>
-      <div>
-        {loading && "Loading..."}
-        {!hasMore && "No more records"}
       </div>
       <AnimeDetailModal {...modalData} show={showModal} onHide={() => setShowModal(false)} setModalData={setModalData} />
     </>

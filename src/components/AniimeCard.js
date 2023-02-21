@@ -4,6 +4,9 @@ import React from "react";
 import './AnimeCard.css'
 
 function AnimeCard(props) {
+  // if (props.index === 0) {
+  //   console.log("the first anime card component is re-rendered")
+  // }
   function RatingRow(props) {
     const ratingDiv = []
     for (let i = 0; i < MAX_RATING; i++) {
