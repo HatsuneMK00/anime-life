@@ -5,7 +5,6 @@ import {useTransition, a} from "@react-spring/web";
 import './AnimeMasonryList.css'
 import useFetchAnimeRecord from "../hooks/useFetchAnimeRecord";
 import {useDispatch, useSelector} from "react-redux";
-import {setRecordState} from "../store/animeRecordDataSlice";
 import AnimeCard from "./AniimeCard";
 import AnimeDetailModal from "./AnimeDetailModal";
 
@@ -25,9 +24,9 @@ function AnimeMasonryList(props) {
   // Hook3: Fetch data
   const dispatch = useDispatch();
   const animeRecordData = useSelector((state) => state.animeRecordData.value)
-  const goSearch = useSelector((state) => state.goSearch.value);
+  const searchQuery = useSelector((state) => state.searchQuery.value);
   const [offset, setOffset] = useState(0)
-  const { loading, hasMore } = useFetchAnimeRecord(props.rating, offset, goSearch)
+  const { loading, hasMore } = useFetchAnimeRecord(props.rating, offset, searchQuery)
   // Hook4: Clear data and offset when rating or searchText change
   // useEffect(() => {
   //   console.log("rating changed, clear data")

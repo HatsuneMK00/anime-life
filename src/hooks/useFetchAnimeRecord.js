@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {BASE_URL, GET} from "../global/network";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {appendToTrailingMulti, setRecordState} from "../store/animeRecordDataSlice";
 import usePrevious from "./usePrevious";
 
-function UseFetchAnimeRecord(rating, offset, goSearch) {
+function UseFetchAnimeRecord(rating, offset, searchQuery) {
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const dispatch = useDispatch()
-  const searchText = useSelector(state => state.searchText.value)
 
   const previousRating = usePrevious(rating)
-  const previousGoSearch = usePrevious(goSearch)
+  const previousSearchQuery = usePrevious(searchQuery)
   const previousOffset = usePrevious(offset)
 
   useEffect(() => {
@@ -19,7 +18,7 @@ function UseFetchAnimeRecord(rating, offset, goSearch) {
     if (rating !== previousRating) {
       console.log("rating changed")
     }
-    if (goSearch !== previousGoSearch) {
+    if (searchQuery !== previousSearchQuery) {
       console.log("search status changed")
     }
     if (previousOffset !== offset) {
@@ -59,9 +58,9 @@ function UseFetchAnimeRecord(rating, offset, goSearch) {
           })
       }
     // when search request fires
-    } else if (goSearch !== previousGoSearch && searchText && searchText !== '') {
+    } else if (searchQuery !== previousSearchQuery && searchQuery && searchQuery !== '') {
       setLoading(true)
-      GET(`${BASE_URL}/api/anime_record/search?searchText=${searchText}`)
+      GET(`${BASE_URL}/api/anime_record/search?searchText=${searchQuery}`)
         .then(data => {
           if (data.hasMore !== null) setHasMore(data.hasMore)
           data = data.data
@@ -75,9 +74,9 @@ function UseFetchAnimeRecord(rating, offset, goSearch) {
         })
     // offset changed, the other two won't change in this case, offset is set correctly by parent component
     } else if (offset !== previousOffset) {
-      if (searchText && searchText !== '') {
+      if (searchQuery && searchQuery !== '') {
         setLoading(true)
-        GET(`${BASE_URL}/api/anime_record/search?offset=${offset}&searchText=${searchText}`)
+        GET(`${BASE_URL}/api/anime_record/search?offset=${offset}&searchText=${searchQuery}`)
           .then(data => {
             if (data.hasMore !== null) setHasMore(data.hasMore)
             data = data.data
@@ -119,7 +118,7 @@ function UseFetchAnimeRecord(rating, offset, goSearch) {
           })
       }
     }
-  }, [rating, goSearch, offset])
+  }, [rating, searchQuery, offset])
 
   return { loading, hasMore }
 }

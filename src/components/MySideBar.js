@@ -1,16 +1,17 @@
-import {Button, Col, Row} from "react-bootstrap";
+import {Button, Col, Form, Row} from "react-bootstrap";
 import './MySideBar.css';
 import SideBarItem from "./SideBarItem";
 import {GrAdd} from "react-icons/gr";
-import {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {BASE_URL, GET} from "../global/network";
 import {useDispatch, useSelector} from "react-redux";
 import {setSummaryState} from "../store/animeRecordSummarySlice";
-import {setSearchText} from "../store/searchTextSlice";
+import {setSearchQuery} from "../store/searchQuerySlice";
 
 function MySideBar(props) {
   const sideBarData = useSelector(state => state.animeRecordSummary.value);
   const dispatch = useDispatch();
+  const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
     GET(`${BASE_URL}/api/anime_record/summary`)
@@ -29,7 +30,13 @@ function MySideBar(props) {
 
   function handleSideBarItemClicked(index) {
     props.choose(index);
-    dispatch(setSearchText(''));
+    setSearchText('');
+    dispatch(setSearchQuery(''))
+  }
+
+  function handleSearchClicked() {
+    dispatch(setSearchQuery(searchText))
+    props.choose(-2)
   }
 
   return (
@@ -64,6 +71,19 @@ function MySideBar(props) {
         <Col className="pe-0">
           <SideBarItem sideBarText="神作" recordCount={sideBarData.ratingFour}/>
         </Col>
+      </Row>
+      <Row className="mt-2 w-100 mb-2">
+        <Form className="d-flex me-2">
+          <Form.Control
+            type="search"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="查找动画"
+            className="me-2"
+            aria-label="Search"
+          />
+          <Button variant="outline-success" onClick={() => handleSearchClicked()}>Search</Button>
+        </Form>
       </Row>
       <Row className="mt-2 w-100">
         <Col className="pe-0 ms-2 me-2">
