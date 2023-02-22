@@ -7,6 +7,7 @@ import {BASE_URL, GET} from "../global/network";
 import {useDispatch, useSelector} from "react-redux";
 import {setSummaryState} from "../store/animeRecordSummarySlice";
 import {setSearchQuery} from "../store/searchQuerySlice";
+import {BsSearch} from "react-icons/bs";
 
 function MySideBar(props) {
   const sideBarData = useSelector(state => state.animeRecordSummary.value);
@@ -72,21 +73,25 @@ function MySideBar(props) {
           <SideBarItem sideBarText="神作" recordCount={sideBarData.ratingFour}/>
         </Col>
       </Row>
-      <Row className="mt-2 w-100 mb-2">
-        <Form className="d-flex me-2">
-          <Form.Control
-            type="search"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder="查找动画"
-            className="me-2"
-            aria-label="Search"
-          />
-          <Button variant="outline-success" onClick={() => handleSearchClicked()}>Search</Button>
-        </Form>
+      <Row className="mt-3 w-100 mb-1">
+        <Col className="p-0 ms-2 me-2">
+          <Form className="d-flex">
+            <Form.Control
+              type="search"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="查找记录"
+              className="me-2"
+              aria-label="Search"
+            />
+            <Button variant="outline-success" onClick={() => handleSearchClicked()} className="d-flex flex-column align-items-center justify-content-center">
+              <BsSearch />
+            </Button>
+          </Form>
+        </Col>
       </Row>
       <Row className="mt-2 w-100">
-        <Col className="pe-0 ms-2 me-2">
+        <Col className="ps-0 pe-0 ms-2 me-2">
           <Button variant="outline-primary" className="w-100" onClick={() => props.showAddAnimeModal(true)}>
             <div className="sidebar-button">
               <GrAdd color="blue" className="me-2"/> 添加动画 <GrAdd color="blue" className="ms-2"/>
