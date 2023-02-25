@@ -1,12 +1,13 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import useMedia from "../hooks/useMedia";
 import useMeasure from "react-use-measure";
 import {useTransition, a} from "@react-spring/web";
 import './AnimeMasonryList.css'
 import useFetchAnimeRecord from "../hooks/useFetchAnimeRecord";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import AnimeCard from "./AniimeCard";
 import AnimeDetailModal from "./AnimeDetailModal";
+import Loading from "./Loading";
 
 function AnimeMasonryList(props) {
   const [showModal, setShowModal] = useState(false)
@@ -22,7 +23,6 @@ function AnimeMasonryList(props) {
   // Hook2: Measure the width of the container element
   const [ref, { width }] = useMeasure()
   // Hook3: Fetch data
-  const dispatch = useDispatch();
   const animeRecordData = useSelector((state) => state.animeRecordData.value)
   const searchQuery = useSelector((state) => state.searchQuery.value);
   const [offset, setOffset] = useState(0)
@@ -41,7 +41,7 @@ function AnimeMasonryList(props) {
     if (observer.current) observer.current.disconnect()
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
-        console.log("interacting")
+        // console.log("interacting")
         setOffset(animeRecordData.length)
       }
     })
@@ -87,6 +87,20 @@ function AnimeMasonryList(props) {
             )
           }
         })}
+        { loading &&
+          <div className="is_loading" style={{
+            'transform': `translate3d(0px, ${Math.max(...heights)}px, 0px)`
+          }}>
+            <Loading />
+          </div>
+        }
+        { !hasMore &&
+          <div className="no_more" style={{
+            'transform': `translate3d(0px, ${Math.max(...heights)}px, 0px)`
+          }}>
+            <span>没有更多啦</span>
+          </div>
+        }
       </div>
       <AnimeDetailModal {...modalData} show={showModal} onHide={() => setShowModal(false)} setModalData={setModalData} />
     </>
