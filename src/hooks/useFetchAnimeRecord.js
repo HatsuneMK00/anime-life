@@ -14,7 +14,7 @@ function UseFetchAnimeRecord(rating, offset, searchQuery) {
   const previousOffset = usePrevious(offset)
 
   useEffect(() => {
-    console.log("fetching data")
+    // console.log("fetching data")
     // when rating changed, only update rating related, offset is not used.
     // when searching, rating is set to -2, the only case that rating may change together with goSearch
     if (rating !== previousRating && rating !== -2) {

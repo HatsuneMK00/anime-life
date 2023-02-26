@@ -31,9 +31,12 @@ function AnimeMasonryList(props) {
   const [offset, setOffset] = useState(0)
   const { loading, hasMore } = useFetchAnimeRecord(props.rating, offset, searchQuery)
   // Hook4: Clear data and offset when rating or searchText change, instead of clear data after next fetch finished
+  // Hook4.1: Get list ref to scroll to top
+  const listRef = useRef()
   useEffect(() => {
-    console.log("rating changed, clear data")
+    // console.log("rating changed, clear data")
     dispatch(setRecordState([]))
+    if (listRef.current) listRef.current.scrollTo({top: 0})
     // setOffset(0)
   }, [props.rating, searchQuery])
   // Hook5: ref last card to load more
@@ -74,7 +77,8 @@ function AnimeMasonryList(props) {
   // Render the grid
   return (
     <>
-      <div ref={ref} className="list">
+      <div ref={ref} className="list_mock" />
+      <div ref={listRef} className="list">
         {transitions((style, item) => {
           if (item.index + 1 === gridItems.length) {
             return (
