@@ -42,7 +42,7 @@ function AnimeMasonryList(props) {
   // Hook5: ref last card to load more
   const observer = useRef()
   const lastCardRef = useCallback(node => {
-    // console.log("lastCardRef callback called, loading is ", loading)
+    // console.log("lastCardRef callback called")
     if (loading) return
     if (observer.current) observer.current.disconnect()
     observer.current = new IntersectionObserver(entries => {
@@ -52,7 +52,8 @@ function AnimeMasonryList(props) {
       }
     })
     if (node) observer.current.observe(node)
-  }, [loading, animeRecordData])
+  // fixme: maybe hasMore is implicitly included by change of animeRecordData. Same 6 renders with/without hasMore.
+  }, [loading, animeRecordData, hasMore])
   // Hook6: Form a grid of stacked items using width & columns we got from hooks 1 & 2
   const [heights, gridItems] = useMemo(() => {
     let heights = new Array(columns).fill(0)
