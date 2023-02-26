@@ -1,15 +1,17 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import useMedia from "../hooks/useMedia";
 import useMeasure from "react-use-measure";
 import {useTransition, a} from "@react-spring/web";
 import './AnimeMasonryList.css'
 import useFetchAnimeRecord from "../hooks/useFetchAnimeRecord";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import AnimeCard from "./AniimeCard";
 import AnimeDetailModal from "./AnimeDetailModal";
 import Loading from "./Loading";
+import {setRecordState} from "../store/animeRecordDataSlice";
 
 function AnimeMasonryList(props) {
+  // console.log("re-render")
   const [showModal, setShowModal] = useState(false)
   const [modalData, setModalData] = useState({
     animeId: 0,
@@ -23,16 +25,17 @@ function AnimeMasonryList(props) {
   // Hook2: Measure the width of the container element
   const [ref, { width }] = useMeasure()
   // Hook3: Fetch data
+  const dispatch = useDispatch()
   const animeRecordData = useSelector((state) => state.animeRecordData.value)
   const searchQuery = useSelector((state) => state.searchQuery.value);
   const [offset, setOffset] = useState(0)
   const { loading, hasMore } = useFetchAnimeRecord(props.rating, offset, searchQuery)
-  // Hook4: Clear data and offset when rating or searchText change
-  // useEffect(() => {
-  //   console.log("rating changed, clear data")
-    // dispatch(setRecordState([]))
+  // Hook4: Clear data and offset when rating or searchText change, instead of clear data after next fetch finished
+  useEffect(() => {
+    console.log("rating changed, clear data")
+    dispatch(setRecordState([]))
     // setOffset(0)
-  // }, [props.rating, searchText])
+  }, [props.rating, searchQuery])
   // Hook5: ref last card to load more
   const observer = useRef()
   const lastCardRef = useCallback(node => {
@@ -64,7 +67,7 @@ function AnimeMasonryList(props) {
     from: ({ x, y, width, height}) => ({ x, y ,width, height, opacity: 0}),
     enter: ({ x, y, width, height }) => ({ x, y, width, height, opacity: 1 }),
     update: ({ x, y, width, height }) => ({ x, y, width, height }),
-    leave: { height: 0, opacity: 0 },
+    // leave: { height: 0, opacity: 0 },
     config: { mass: 5, tension: 500, friction: 100 },
     trail: 25,
   })
@@ -94,7 +97,7 @@ function AnimeMasonryList(props) {
             <Loading />
           </div>
         }
-        { !hasMore &&
+        { !hasMore && !loading &&
           <div className="no_more" style={{
             'transform': `translate3d(0px, ${Math.max(...heights)}px, 0px)`
           }}>
