@@ -24,6 +24,22 @@
     border-radius: 12px;
 }
 
+.anime-card__cover__skeleton {
+    width: 70%;
+    opacity: .7;
+    animation: skeleton-image 1s linear infinite alternate;
+}
+
+@keyframes skeleton-image {
+    0% {
+        background-color: hsl(200, 20%, 70%);
+    }
+
+    100% {
+        background-color: hsl(200, 20%, 95%);
+    }
+}
+
 .anime-card__info {
     display: flex;
     flex-direction: column;

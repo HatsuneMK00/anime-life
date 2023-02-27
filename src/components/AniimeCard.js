@@ -1,6 +1,6 @@
 import {MAX_RATING} from "../global/anime_record";
 import {BsStar, BsStarFill} from "react-icons/bs";
-import React from "react";
+import React, {useState} from "react";
 import './AnimeCard.css'
 
 function AnimeCard(props) {
@@ -40,9 +40,11 @@ function AnimeCard(props) {
     props.showAnimeDetailModal(true)
   }
 
+  const [loaded, setLoaded] = useState(false)
+
   return (
     <div className="anime-card" onClick={handleCardClicked}>
-      <img src={props.cover} alt="Cover" className="anime-card__cover"/>
+      <img src={props.cover} alt="Cover" onLoad={() => setLoaded(true)} className={ loaded ? "anime-card__cover" : "anime-card__cover anime-card__cover__skeleton"}/>
       <div className="anime-card__info">
         <div className="anime-card__name">
           {props.name}
