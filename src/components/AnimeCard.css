@@ -25,7 +25,7 @@
 }
 
 .anime-card__cover__skeleton {
-    width: 70%;
+    width: 58%;
     opacity: .7;
     animation: skeleton-image 1s linear infinite alternate;
 }
