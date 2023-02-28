@@ -14,15 +14,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.14.0'
-          
-      - name: Change CI setting
-        run: export CI=false
         
       - name: Download Dependencies
         run: npm install
         
       - name: Build
-        run: npm run build
+        run: CI=false npm run build
         
       - name: Deploy to Aliyun
         uses: easingthemes/ssh-deploy@v4.1.8
