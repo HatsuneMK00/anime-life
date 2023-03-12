@@ -21,7 +21,7 @@ function AnimeMasonryList(props) {
     comment: '',
   })
   // Hook1: Tie media queries to the number of columns
-  const columns = useMedia(['(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)'], [5, 4, 3], 2)
+  const columns = useMedia(['(min-width: 2500px)', '(min-width: 2000px)', '(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)'], [7, 6, 5, 4, 3], 2)
   // Hook2: Measure the width of the container element
   const [ref, { width }] = useMeasure()
   // Hook3: Fetch data
