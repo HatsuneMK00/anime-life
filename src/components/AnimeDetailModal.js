@@ -6,7 +6,7 @@ import {useDispatch} from "react-redux";
 import {BASE_URL, GET, POST} from "../global/network";
 import {deleteById, updateById} from "../store/animeRecordDataSlice";
 import {setShowPopupAlert} from "../store/globalStatus";
-import {decrementRating} from "../store/animeRecordSummarySlice";
+import {decrementRating, incrementRating} from "../store/animeRecordSummarySlice";
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {AiOutlineEdit} from "react-icons/ai";
 import {BsArrowLeftCircle, BsArrowRightCircle} from "react-icons/bs";
@@ -52,6 +52,8 @@ function AnimeDetailModal(props) {
     });
   }
 
+  const oldRating = props.animeRating
+
   // update the anime record
   function handleSubmitClicked() {
     setShowLoading(true);
@@ -84,6 +86,10 @@ function AnimeDetailModal(props) {
         }
         console.log(animeRecord)
         dispatch(updateById(animeRecord));
+        if (oldRating !== animeRecord.rating) {
+          dispatch(decrementRating(oldRating))
+          dispatch(incrementRating(animeRecord.rating))
+        }
         dispatch(setShowPopupAlert({
           show: true,
           variant: 'success',
