@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {appendToLeading, deleteById} from "../store/animeRecordDataSlice";
 import {incrementRating} from "../store/animeRecordSummarySlice";
 import {setShowPopupAlert} from "../store/globalStatus";
+import LiveSearch from "./LiveSearch";
 
 function AddAnimeRecordModal(props) {
 
@@ -15,7 +16,7 @@ function AddAnimeRecordModal(props) {
   function handleSubmitClicked() {
     setShowLoading(true);
     const requestData = {
-      animeName: formData.animeName,
+      animeName: animeName,
       animeRating: parseInt(formData.animeRating),
       comment: formData.comment,
     }
@@ -84,10 +85,11 @@ function AddAnimeRecordModal(props) {
   }
 
   const [formData, setFormData] = useState({
-    animeName: '',
     animeRating: -2,
     comment: '',
   });
+
+  const [animeName, setAnimeName] = useState('');
 
   const [showLoading, setShowLoading] = useState(false);
 
@@ -117,15 +119,7 @@ function AddAnimeRecordModal(props) {
         <Form>
           <Form.Group className="mb-3" controlId="animeName">
             <Form.Label>动画名称</Form.Label>
-            <Form.Control
-              value={formData.animeName}
-              onChange={handleChange}
-              name="animeName"
-              type="text"
-              placeholder="请输入动画名称"/>
-            <Form.Text className="text-muted">
-              建议使用与bangumi相同的名称 以获取正确的相关信息
-            </Form.Text>
+            <LiveSearch animeName={animeName} setAnimeName={setAnimeName} />
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="animeRating">

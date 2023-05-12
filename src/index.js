@@ -9,6 +9,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import store from "./store";
 import {Provider} from "react-redux";
 import Welcome from "./Welcome";
+import LiveSearch from "./components/LiveSearch";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  // <LiveSearch  />
   <Provider store={store}>
     <RouterProvider router={router} />
   </Provider>
