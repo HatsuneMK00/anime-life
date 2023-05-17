@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './Login.css'
 import {Button, Container, Form, InputGroup} from "react-bootstrap";
-import {BASE_URL, POST} from "./global/network";
+import {BASE_URL, GET, POST} from "./global/network";
 import {useNavigate} from "react-router-dom";
 import {AiOutlineMail} from "react-icons/ai";
 import {BiKey} from "react-icons/bi";
@@ -16,6 +16,7 @@ function Login() {
   const [loginType, setLoginType] = useState(1);
   const [showLoading, setShowLoading] = useState(false);
   const [showErrMsg, setShowErrMsg] = useState(false);
+  const [errMsg, setErrMsg] = useState('');
   const navigate = useNavigate();
 
   function handleSubmitClicked(event) {
@@ -28,7 +29,7 @@ function Login() {
       password: password,
       email: email,
       code: code,
-      loginType: loginType,
+      type: loginType,
     }
     POST(`${BASE_URL}/login`, requestData)
       .then(data => {
@@ -39,14 +40,17 @@ function Login() {
           console.log('login success');
         } else if (data.code === 401) {
           setShowErrMsg(true);
+          setErrMsg(loginType === 0 ? '用户名或密码错误' : '验证码错误');
         } else {
           setShowErrMsg(true);
+          setErrMsg('未知错误');
         }
       })
       .catch(err => {
         console.log(err);
         setShowLoading(false);
         setShowErrMsg(true);
+        setErrMsg('未知错误')
       });
   }
 
@@ -60,6 +64,16 @@ function Login() {
 
   function onSendCodeClicked() {
     setSendCodeCD(60);
+    GET(`${BASE_URL}/login_via_email?email=${email}`)
+      .then(data => {
+        setShowErrMsg(true)
+        setErrMsg('已发送验证码到该邮箱')
+      })
+      .catch(err => {
+        console.log(err);
+        setShowErrMsg(true)
+        setErrMsg('发送验证码失败，该邮箱可能未注册')
+      })
   }
 
   useEffect(() => {
@@ -99,7 +113,7 @@ function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}/>
                 <Button className="w-25" variant="outline-light" id="send-code-btn" disabled={sendCodeCD > 0} onClick={() => onSendCodeClicked()}>
-                  {sendCodeCD > 0 ? `${sendCodeCD}s` : 'Send Code'}
+                  {sendCodeCD > 0 ? `${sendCodeCD}s` : '发送验证码'}
                 </Button>
               </InputGroup>}
 
@@ -122,7 +136,7 @@ function Login() {
             {showErrMsg &&
               <div className="login-form__err-msg">
                 <Form.Text className="login-form__err-msg">
-                  {loginType === 0 ? '用户名或密码错误' : '邮箱或验证码错误'}
+                  {errMsg}
                 </Form.Text>
               </div>
             }
