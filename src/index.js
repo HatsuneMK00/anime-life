@@ -9,12 +9,11 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import store from "./store";
 import {Provider} from "react-redux";
 import Welcome from "./Welcome";
-import LiveSearch from "./components/LiveSearch";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to={"/welcome"} replace/>
+    element: <Navigate to={"/anime_record"} replace/>
   },
   {
     path: "/login",
