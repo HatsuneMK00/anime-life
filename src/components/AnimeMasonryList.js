@@ -37,7 +37,7 @@ function AnimeMasonryList(props) {
     // console.log("rating changed, clear data")
     dispatch(setRecordState([]))
     if (listRef.current) listRef.current.scrollTo({top: 0})
-    // setOffset(0)
+    setOffset(0)
   }, [props.rating, searchQuery])
   // Hook5: ref last card to load more
   const observer = useRef()
@@ -48,6 +48,7 @@ function AnimeMasonryList(props) {
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
         // console.log("interacting")
+        // console.log("data offset: ", animeRecordData.length)
         setOffset(animeRecordData.length)
       }
     })
@@ -84,7 +85,7 @@ function AnimeMasonryList(props) {
           if (item.index + 1 === gridItems.length) {
             return (
               <a.div className="card" style={style} ref={lastCardRef}>
-                <AnimeCard {...item} />
+                <AnimeCard {...item} setAnimeDetail={setModalData} showAnimeDetailModal={setShowModal} />
               </a.div>
             )
           } else {

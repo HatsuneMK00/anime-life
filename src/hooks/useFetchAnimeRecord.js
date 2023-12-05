@@ -63,7 +63,9 @@ function UseFetchAnimeRecord(rating, offset, searchQuery) {
           setLoading(false)
         })
     // offset changed, the other two won't change in this case, offset is set correctly by parent component
-    } else if (offset !== previousOffset) {
+    // if offset < previousOffset, it means offset is set to 0 because of rating change or search change
+    // if offset > previousOffset, it means offset is set to a larger number because of scrolling
+    } else if (offset > previousOffset) {
       if (searchQuery && searchQuery !== '') {
         setLoading(true)
         GET(`${BASE_URL}/api/anime_record/search?offset=${offset}&searchText=${searchQuery}`)
