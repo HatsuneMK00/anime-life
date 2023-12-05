@@ -15,7 +15,7 @@ function LiveSearch(props) {
   const [loading, setLoading] = useState(false)
   const [timer, setTimer] = useState(0)
   const fetchAnimeCandidates = (s) => {
-    const url = `${BANGUMI_BASE_URL}/search/subject/${s}?type=2&responseGroup=small&max_results=6`
+    const url = `${BANGUMI_BASE_URL}/search/subject/${s}?type=2&responseGroup=small&max_results=5`
     if (s.trim() === "") {
       setLoading(false)
       setShowSearchResult(false)
@@ -73,6 +73,7 @@ function LiveSearch(props) {
           value={props.animeName}
           onChange={event => handleChange(event.target.value)}
           placeholder="动画名称"
+          onBlur={() => setShowSearchResult(false)}
           className="live-search__input"/>
         {showSearchResult && <div className="search-result__container">
           {!loading ? <ListGroup>
