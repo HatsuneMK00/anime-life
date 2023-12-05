@@ -84,7 +84,7 @@ function AnimeMasonryList(props) {
           if (item.index + 1 === gridItems.length) {
             return (
               <a.div className="card" style={style} ref={lastCardRef}>
-                <AnimeCard {...item} />
+                <AnimeCard {...item} setAnimeDetail={setModalData} showAnimeDetailModal={setShowModal} />
               </a.div>
             )
           } else {
