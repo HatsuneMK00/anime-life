@@ -90,6 +90,7 @@ function AddAnimeRecordModal(props) {
   });
 
   const [animeName, setAnimeName] = useState('');
+  const [showSearchResult, setShowSearchResult] = useState(false)
 
   const [showLoading, setShowLoading] = useState(false);
 
@@ -108,6 +109,13 @@ function AddAnimeRecordModal(props) {
       {...props}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
+      onClick={event => {
+        // If the click is not on the search result list, then hide the list
+        // If the click is on the search result list, then do nothing
+        if (event.target.id !== 'search-result__item') {
+          setShowSearchResult(false)
+        }
+      }}
       centered>
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
@@ -119,7 +127,11 @@ function AddAnimeRecordModal(props) {
         <Form>
           <Form.Group className="mb-3" controlId="animeName">
             <Form.Label>动画名称</Form.Label>
-            <LiveSearch animeName={animeName} setAnimeName={setAnimeName} />
+            <LiveSearch
+              animeName={animeName}
+              setAnimeName={setAnimeName}
+              showSearchResult={showSearchResult}
+              setShowSearchResult={setShowSearchResult}/>
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="animeRating">
