@@ -11,14 +11,14 @@ import Loading from "./Loading";
 function LiveSearch(props) {
   // const [animeName, setAnimeName] = useState('')
   const [searchResult, setSearchResult] = useState([])
-  const [showSearchResult, setShowSearchResult] = useState(false)
+  // const [showSearchResult, setShowSearchResult] = useState(false)
   const [loading, setLoading] = useState(false)
   const [timer, setTimer] = useState(0)
   const fetchAnimeCandidates = (s) => {
     const url = `${BANGUMI_BASE_URL}/search/subject/${s}?type=2&responseGroup=small&max_results=5`
     if (s.trim() === "") {
       setLoading(false)
-      setShowSearchResult(false)
+      props.setShowSearchResult(false)
       return
     }
     fetch(encodeURI(url), {
@@ -46,14 +46,14 @@ function LiveSearch(props) {
     // if the user types something in 1.5s, then cancel the timer and set a new timer
     clearTimeout(timer)
     setLoading(true)
-    setShowSearchResult(true)
+    props.setShowSearchResult(true)
     const newTimer = setTimeout(() => {
       fetchAnimeCandidates(value)
     }, 1500)
     setTimer(newTimer)
   }
   const handleItemSelected = (index) => {
-    setShowSearchResult(false)
+    props.setShowSearchResult(false)
     props.setAnimeName(searchResult[index])
   }
 
@@ -73,13 +73,12 @@ function LiveSearch(props) {
           value={props.animeName}
           onChange={event => handleChange(event.target.value)}
           placeholder="动画名称"
-          onBlur={() => setShowSearchResult(false)}
           className="live-search__input"/>
-        {showSearchResult && <div className="search-result__container">
+        {props.showSearchResult && <div className="search-result__container">
           {!loading ? searchResult.length > 0 ? <ListGroup>
               {
                 searchResult.map((item, index) => {
-                  return <ListGroup.Item className="search-result__item" key={index}
+                  return <ListGroup.Item className="search-result__item" id="search-result__item" key={index}
                                          onClick={() => handleItemSelected(index)}>{item}</ListGroup.Item>
                 })
               }
