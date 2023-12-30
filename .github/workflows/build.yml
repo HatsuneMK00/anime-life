@@ -35,7 +35,7 @@ jobs:
           echo tag=$tag
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
   docker-build:
-    needs: [prepare-version]
+    needs: [ prepare-version ]
     runs-on: ubuntu-latest
     outputs:
       image_id: ${{ steps.push_image.outputs.image_id }}
@@ -63,7 +63,7 @@ jobs:
           echo "image_id=$IMAGE_ID" >> "$GITHUB_OUTPUT"
   docker-copy:
     runs-on: ubuntu-latest
-    needs: [prepare-version, docker-build]
+    needs: [ prepare-version, docker-build ]
     outputs:
       image_id: ${{ steps.export_image_id.outputs.image_id }}
     env:
@@ -99,63 +99,72 @@ jobs:
           [[ "${{ env.COPY_TO_ACR }}" == 'true' ]] && image_id=$ACR_IMAGE_ID
           echo "Final IMAGE_ID=$image_id"
           echo "image_id=$image_id" >> "$GITHUB_OUTPUT"
-#  publish-helm:
-#    runs-on: ubuntu-latest
-#    needs: [prepare-version, docker-build, docker-copy]
-#    env:
-#      IMAGE_ID: ${{ needs.docker-copy.outputs.image_id }}
-#      IMAGE_TAG: ${{ needs.prepare-version.outputs.tag }}
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - name: Checkout helm-charts repo
-#        uses: actions/checkout@v4
-#        with:
-#          repository: HatsuneMK00/helm-charts
-#          path: helm-charts
-#          token: ${{ secrets.GH_TOKEN }}
-#      - name: Update image tag
-#        run: |
-#          ENCODED_IMAGE_ID=$(echo ${{ env.IMAGE_ID }} | sed 's/\//\\\//g')
-#          sed -i "s/repository:.*/repository: $ENCODED_IMAGE_ID/" .ci/charts/anime-life-nextjs/values.yaml
-#          sed -i "s/tag:.*/tag: ${{ env.IMAGE_TAG }}/" .ci/charts/anime-life-nextjs/values.yaml
-#      - name: Read current chart version
-#        uses: mikefarah/yq@master
-#        id: read_chart_version
-#        with:
-#          cmd: yq '.version' helm-charts/charts/anime-life-nextjs/Chart.yaml
-#      - name: Update chart version
-#        id: update_chart_version
-#        run: |
-#          version=${{ steps.read_chart_version.outputs.result }}
-#          echo "current chart version: $version"
-#          new_version=$(.github/scripts/incre_semver.sh $version patch)
-#          echo "new chart version: $new_version"
-#          CHART_VERSION=$(echo $version | cut -d '-' -f1)-${{ github.sha }}
-#          [[ "${{ github.ref }}" == "refs/heads/master" ]] && CHART_VERSION=$new_version
-#          sed -i "s/version:.*/version: $CHART_VERSION/" .ci/charts/anime-life-nextjs/Chart.yaml
-#          echo "chart_version=$CHART_VERSION" >> "$GITHUB_OUTPUT"
-#      - name: Setup Helm
-#        uses: azure/setup-helm@v3
-#        with:
-#          version: '3.12.2' # default is latest (stable)
-#      - name: Setup KUBE_CONFIG
-#        uses: azure/k8s-set-context@v3
-#        with:
-#          method: kubeconfig
-#          kubeconfig: ${{ secrets.KUBE_CONFIG }}
-#      - name: Deploy to k3s
-#        run: |
-#          helm upgrade --wait --timeout 5m --namespace default anime-life-nextjs .ci/charts/anime-life-nextjs
-#      - name: Commit and push changes to HatsuneMK00/helm-charts
-#        run: |
-#          cp -r .ci/charts/anime-life-nextjs helm-charts/charts
-#          cd helm-charts
-#          git config user.name "$GITHUB_ACTOR"
-#          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-#          git add .
-#          git commit -m "Update anime-life-nextjs to ${{ steps.update_chart_version.outputs.chart_version }}"
-#          git push
-#      - name: Summary
-#        run: |
-#          echo "Helm Chart Version: ${{ steps.update_chart_version.outputs.chart_version }}" >> $GITHUB_STEP_SUMMARY
+  publish-helm:
+    runs-on: ubuntu-latest
+    needs: [ prepare-version, docker-build, docker-copy ]
+    env:
+      IMAGE_ID: ${{ needs.docker-copy.outputs.image_id }}
+      IMAGE_TAG: ${{ needs.prepare-version.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Checkout helm-charts repo
+        uses: actions/checkout@v4
+        with:
+          repository: HatsuneMK00/helm-charts
+          path: helm-charts
+          token: ${{ secrets.GH_TOKEN }}
+      - name: Update image tag
+        run: |
+          ENCODED_IMAGE_ID=$(echo ${{ env.IMAGE_ID }} | sed 's/\//\\\//g')
+          sed -i "s/repository:.*/repository: $ENCODED_IMAGE_ID/" .ci/charts/anime-life/values.yaml
+          sed -i "s/tag:.*/tag: ${{ env.IMAGE_TAG }}/" .ci/charts/anime-life/values.yaml
+      - name: Prepare Chart.yaml path
+        id: prepare_chart_path
+        run: |
+          chart_path="helm-charts/charts/anime-life/Chart.yaml"
+          if [ ! -f $chart_path ]; then
+              echo "Chart.yaml not found in helm-charts repo"
+              chart_path=".ci/charts/anime-life/Chart.yaml"
+          fi
+          echo "chart_path=$chart_path" >> "$GITHUB_OUTPUT"
+      - name: Read current chart version
+        uses: mikefarah/yq@master
+        id: read_chart_version
+        with:
+          cmd: yq '.version' ${{ steps.prepare_chart_path.outputs.chart_path }}
+      - name: Update chart version
+        id: update_chart_version
+        run: |
+          version=${{ steps.read_chart_version.outputs.result }}
+          echo "current chart version: $version"
+          new_version=$(.github/scripts/incre_semver.sh $version patch)
+          echo "new chart version: $new_version"
+          CHART_VERSION=$(echo $version | cut -d '-' -f1)-${{ github.sha }}
+          [[ "${{ github.ref }}" == "refs/heads/master" ]] && CHART_VERSION=$new_version
+          sed -i "s/version:.*/version: $CHART_VERSION/" .ci/charts/anime-life/Chart.yaml
+          echo "chart_version=$CHART_VERSION" >> "$GITHUB_OUTPUT"
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: '3.12.2' # default is latest (stable)
+      - name: Setup KUBE_CONFIG
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+      - name: Deploy to k3s
+        run: |
+          helm upgrade --wait --timeout 5m --namespace default anime-life .ci/charts/anime-life
+      - name: Commit and push changes to HatsuneMK00/helm-charts
+        run: |
+          cp -r .ci/charts/anime-life helm-charts/charts
+          cd helm-charts
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add .
+          git commit -m "Update anime-life to ${{ steps.update_chart_version.outputs.chart_version }}"
+          git push
+      - name: Summary
+        run: |
+          echo "Helm Chart Version: ${{ steps.update_chart_version.outputs.chart_version }}" >> $GITHUB_STEP_SUMMARY
